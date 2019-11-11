@@ -14,6 +14,10 @@
 		FCA078322379412B00D84628 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FCA078302379412B00D84628 /* LaunchScreen.storyboard */; };
 		FCA0783B2379419000D84628 /* MainTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA0783A2379419000D84628 /* MainTabController.swift */; };
 		FCA0783D2379420100D84628 /* BookmarkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA0783C2379420100D84628 /* BookmarkViewController.swift */; };
+		FCA0784023794F8100D84628 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA0783F23794F8100D84628 /* Constants.swift */; };
+		FCA07845237990F400D84628 /* HNViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA07844237990F400D84628 /* HNViewModel.swift */; };
+		FCA078482379917100D84628 /* TopStoriesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA078472379917100D84628 /* TopStoriesCell.swift */; };
+		FCA0784B237991A800D84628 /* HNModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA0784A237991A800D84628 /* HNModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +30,10 @@
 		FCA078332379412B00D84628 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FCA0783A2379419000D84628 /* MainTabController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabController.swift; sourceTree = "<group>"; };
 		FCA0783C2379420100D84628 /* BookmarkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkViewController.swift; sourceTree = "<group>"; };
+		FCA0783F23794F8100D84628 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		FCA07844237990F400D84628 /* HNViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNViewModel.swift; sourceTree = "<group>"; };
+		FCA078472379917100D84628 /* TopStoriesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopStoriesCell.swift; sourceTree = "<group>"; };
+		FCA0784A237991A800D84628 /* HNModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HNModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +66,10 @@
 		FCA078242379412200D84628 /* HackerNews Client */ = {
 			isa = PBXGroup;
 			children = (
+				FCA078492379919B00D84628 /* Model */,
+				FCA078462379915E00D84628 /* TabelViewCell */,
+				FCA07843237990E400D84628 /* ViewModel */,
+				FCA0783E23794F6B00D84628 /* Constants */,
 				FCA078392379416A00D84628 /* ViewController */,
 				FCA078252379412200D84628 /* AppDelegate.swift */,
 				FCA078272379412200D84628 /* SceneDelegate.swift */,
@@ -76,6 +88,38 @@
 				FCA0783C2379420100D84628 /* BookmarkViewController.swift */,
 			);
 			path = ViewController;
+			sourceTree = "<group>";
+		};
+		FCA0783E23794F6B00D84628 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				FCA0783F23794F8100D84628 /* Constants.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		FCA07843237990E400D84628 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				FCA07844237990F400D84628 /* HNViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		FCA078462379915E00D84628 /* TabelViewCell */ = {
+			isa = PBXGroup;
+			children = (
+				FCA078472379917100D84628 /* TopStoriesCell.swift */,
+			);
+			path = TabelViewCell;
+			sourceTree = "<group>";
+		};
+		FCA078492379919B00D84628 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				FCA0784A237991A800D84628 /* HNModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -148,11 +192,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FCA0784B237991A800D84628 /* HNModel.swift in Sources */,
 				FCA0782A2379412200D84628 /* HomeViewController.swift in Sources */,
 				FCA078262379412200D84628 /* AppDelegate.swift in Sources */,
 				FCA0783B2379419000D84628 /* MainTabController.swift in Sources */,
+				FCA078482379917100D84628 /* TopStoriesCell.swift in Sources */,
 				FCA078282379412200D84628 /* SceneDelegate.swift in Sources */,
+				FCA07845237990F400D84628 /* HNViewModel.swift in Sources */,
 				FCA0783D2379420100D84628 /* BookmarkViewController.swift in Sources */,
+				FCA0784023794F8100D84628 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

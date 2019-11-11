@@ -12,6 +12,7 @@ import UIKit
 class MainTabController:
 UITabBarController
 {
+    let searchBar = UISearchBar.init(frame: CGRect.zero)
     override func viewDidLoad() {
         super.viewDidLoad()
         

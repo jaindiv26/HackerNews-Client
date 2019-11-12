@@ -20,6 +20,7 @@ class HNModel {
     var title: String = ""
     var url: String = ""
     var comment: String = ""
+    var isBookmarked: Bool = false
     
     init() {
         

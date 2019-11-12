@@ -13,7 +13,8 @@ UIViewController,
 ViewModelDelegate,
 UITableViewDataSource,
 UITableViewDelegate,
-UISearchBarDelegate
+UISearchBarDelegate,
+TopStoriesCellDelegate
 {
 
     var list: [HNModel] = []
@@ -31,25 +32,21 @@ UISearchBarDelegate
         super.viewDidLoad()
         
         view.backgroundColor = .white
-        
-        searchBar.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(searchBar)
-        searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
-        searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
-        searchBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 40).isActive = true
+
         searchBar.placeholder = " Search..."
         searchBar.sizeToFit()
         searchBar.isTranslucent = false
         searchBar.backgroundImage = UIImage()
         searchBar.delegate = self
         searchBar.searchBarStyle = UISearchBar.Style.default
+        navigationItem.titleView = searchBar
         
         tbv.translatesAutoresizingMaskIntoConstraints = false
         tbv.dataSource = self
         view.addSubview(tbv)
         tbv.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12).isActive = true
         tbv.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12).isActive = true
-        tbv.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 0).isActive = true
+        tbv.topAnchor.constraint(equalTo: view.topAnchor, constant: 12).isActive = true
         tbv.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
         tbv.register(TopStoriesCell.self, forCellReuseIdentifier: "topStoriesCell")
         tbv.delegate = self
@@ -129,6 +126,10 @@ UISearchBarDelegate
         }
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.navigationController?.pushViewController(StoryViewController.init(model: filteredList[indexPath.row]), animated: true)
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredList.count
     }
@@ -137,7 +138,29 @@ UISearchBarDelegate
         let cell = tableView.dequeueReusableCell(withIdentifier: "topStoriesCell", for: indexPath) as! TopStoriesCell
         cell.setData(model: filteredList[indexPath.row])
         cell.selectionStyle = .none
+        cell.delegate = self
         return cell
+    }
+    
+    public func didTapBookmarkToggleFromCell(model : HNModel) {
+        toggleBookmarkStory(model.id)
+        model.isBookmarked = !model.isBookmarked
+        tbv.reloadData()
+    }
+    
+    private func toggleBookmarkStory(_ storyId: Int) {
+        if var bookmarkedIds = UserDefaults.standard.value(forKey: Constants.bookmarkedIds) as? [Int] {
+            if let itemToRemoveIndex = bookmarkedIds.firstIndex(of: storyId) {
+                bookmarkedIds.remove(at: itemToRemoveIndex)
+            }
+            else {
+                bookmarkedIds.append(storyId)
+            }
+            UserDefaults.standard.set(bookmarkedIds, forKey: Constants.bookmarkedIds)
+        }
+        else {
+            UserDefaults.standard.set([storyId], forKey: Constants.bookmarkedIds)
+        }
     }
 
 }

@@ -9,6 +9,31 @@
 import Foundation
 import UIKit
 
+extension UIImageView {
+    func downloaded(from url: URL, contentMode mode: UIView.ContentMode = .scaleAspectFit) {
+        contentMode = mode
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard
+                let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200,
+                let mimeType = response?.mimeType, mimeType.hasPrefix("image"),
+                let data = data, error == nil,
+                let image = UIImage(data: data)
+                else { return }
+            DispatchQueue.main.async() {
+                self.image = image
+            }
+        }.resume()
+    }
+    func downloaded(from link: String, contentMode mode: UIView.ContentMode = .scaleAspectFit) {
+        guard let url = URL(string: link) else { return }
+        downloaded(from: url, contentMode: mode)
+    }
+}
+
+protocol TopStoriesCellDelegate {
+    func didTapBookmarkToggleFromCell(model : HNModel)
+}
+
 class TopStoriesCell: UITableViewCell {
     
     let domainIcon = UIImageView.init(frame: CGRect.zero)
@@ -18,6 +43,10 @@ class TopStoriesCell: UITableViewCell {
     let timestamp = UILabel.init(frame: CGRect.zero)
     let upvotes = UILabel.init(frame: CGRect.zero)
     let commentsCount = UILabel.init(frame: CGRect.zero)
+    let bookmarkButton = UIButton(type: .system)
+    
+    var model: HNModel?
+    var delegate: TopStoriesCellDelegate?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -75,23 +104,39 @@ class TopStoriesCell: UITableViewCell {
         commentsCount.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12).isActive = true
         commentsCount.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         commentsCount.textColor = .darkGray
+        
+        
+        bookmarkButton.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(bookmarkButton)
+        bookmarkButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12).isActive = true
+        bookmarkButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12).isActive = true
+        bookmarkButton.setImage(UIImage(named: "bookmark_16px"), for: .normal)
+        bookmarkButton.addTarget(self, action:#selector(didTapBookmarkButton), for: UIControl.Event.touchUpInside)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func setData(model: HNModel) {
-        let domain = URL(string: model.url)?.host
-        let url = URL(string: Constants.domainIconEndpoint + domain!)
-        
-        do {
-            let data = try Data(contentsOf: url!)
-            domainIcon.image = UIImage(data: data)
-        } catch let parsingError {
-            print("Error in parsing data", parsingError)
-            domainIcon.image = .none
+    @objc func didTapBookmarkButton() {
+        guard let model = model else {
+            return
         }
+        delegate?.didTapBookmarkToggleFromCell(model: model)
+    }
+    
+    public func setData(model: HNModel) {
+        self.model = model
+        guard let domain = URL(string: model.url)?.host else {
+            return
+        }
+
+        guard let url = URL(string: Constants.domainIconEndpoint + domain) else {
+            return
+        }
+        
+        domainIcon.downloaded(from: url)
+
         domainText.text = domain
         title.text = model.title
         author.text = "By - " + model.author.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -130,6 +175,11 @@ class TopStoriesCell: UITableViewCell {
         upvotes.text = String(model.upVotes) + " points"
         commentsCount.text = String(model.commentCount) + " comments"
         
+        if (model.isBookmarked) {
+            bookmarkButton.tintColor = .orange
+        } else {
+            bookmarkButton.tintColor = .none
+        }
     }
     
 }

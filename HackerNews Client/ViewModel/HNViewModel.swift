@@ -8,6 +8,29 @@
 
 import Foundation
 
+extension Data {
+    var html2AttributedString: NSAttributedString? {
+        do {
+            return try NSAttributedString(data: self, options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.utf8.rawValue], documentAttributes: nil)
+        } catch {
+            print("error:", error)
+            return  nil
+        }
+    }
+    var html2String: String {
+        return html2AttributedString?.string ?? ""
+    }
+}
+
+extension String {
+    var html2AttributedString: NSAttributedString? {
+        return Data(utf8).html2AttributedString
+    }
+    var html2String: String {
+        return html2AttributedString?.string ?? ""
+    }
+}
+
 protocol ViewModelDelegate {
     func getItemModel(list: [HNModel])
 }
@@ -59,6 +82,13 @@ class HNViewModel {
         }
     }
     
+    private func isStoryBookmarked(_ storyId: Int) -> Bool{
+        if let bookmarkedIds = UserDefaults.standard.value(forKey: Constants.bookmarkedIds) as? [Int] {
+            return bookmarkedIds.contains(storyId)
+        }
+        return false
+    }
+    
     func idsFetched(_ ids:[Int]?, fetchedCount:Int, noOfItemsToFetch: Int){
         var i = fetchedCount
         var n = noOfItemsToFetch
@@ -91,6 +121,9 @@ class HNViewModel {
         }
         dispatchGroup.notify(queue: .main) {
             i = i + n
+            self.list.forEach { (model) in
+                model.isBookmarked = self.isStoryBookmarked(model.id)
+            }
             self.delegate.getItemModel(list: self.list)
             self.idsFetched(ids, fetchedCount: i, noOfItemsToFetch: n)
         }
@@ -134,6 +167,7 @@ class HNViewModel {
                             url: jsonObject["url"]  as? String ?? "",
                             comment: jsonObject["text"] as? String ?? ""
                         )
+                        model.comment = model.comment.html2String
                         self.list.append(model)
                         dispactGroup.leave()
                     } catch let parsingError {

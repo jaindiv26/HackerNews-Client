@@ -15,12 +15,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         window = UIWindow.init(frame: UIScreen.main.bounds)
-        let nav = UINavigationController.init(rootViewController: MainTabController())
+        
+        var nav = UINavigationController.init()
+        
+        if (UserDefaults.standard.value(forKey: Constants.isLoggedIn) as? Bool ?? false) {
+            nav = UINavigationController.init(rootViewController: MainTabController())
+        } else {
+            nav = UINavigationController.init(rootViewController: WelcomeViewController())
+        }
+
         nav.setNavigationBarHidden(true, animated: false)
         nav.navigationBar.isTranslucent = true
         nav.navigationBar.backgroundColor = .clear
         window?.rootViewController = nav
         window?.makeKeyAndVisible()
+        
         return true
     }
     

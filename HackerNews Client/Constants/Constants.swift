@@ -16,4 +16,5 @@ class Constants {
     public static let googleSignInClientId = "1066366793735-il4td26mn1hm3t645deborhq1kamecki.apps.googleusercontent.com"
     public static let isLoggedIn = "isLoggedIn"
     public static let bookmarkedIds = "bookmarkedIds"
+    public static let userName = "userName"
 }

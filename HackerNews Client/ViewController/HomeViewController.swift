@@ -127,6 +127,8 @@ TopStoriesCellDelegate
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let currentReadCount = UserDefaults.standard.value(forKey: Constants.userReadCount) as? Int
+        UserDefaults.standard.set((currentReadCount ?? 0) + 1, forKey: Constants.userReadCount)
         self.navigationController?.pushViewController(StoryViewController.init(model: filteredList[indexPath.row]), animated: true)
     }
     

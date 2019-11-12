@@ -97,7 +97,7 @@ class WelcomeViewController: UIViewController, GIDSignInDelegate {
             }
             return
         }
-        UserDefaults.standard.set(user.profile.name, forKey: Constants.userName)
+        UserDefaults.standard.set(user.profile.givenName, forKey: Constants.userName)
         UserDefaults.standard.set(true, forKey: Constants.isLoggedIn)
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate

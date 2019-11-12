@@ -17,4 +17,5 @@ class Constants {
     public static let isLoggedIn = "isLoggedIn"
     public static let bookmarkedIds = "bookmarkedIds"
     public static let userName = "userName"
+    public static let userReadCount = "userReadCount"
 }

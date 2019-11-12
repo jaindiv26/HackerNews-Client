@@ -56,45 +56,45 @@ class TopStoriesCell: UITableViewCell {
         domainIcon.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(domainIcon)
         domainIcon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0).isActive = true
-        domainIcon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12).isActive = true
+        domainIcon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16).isActive = true
         domainIcon.widthAnchor.constraint(equalToConstant: 16).isActive = true
         domainIcon.heightAnchor.constraint(equalToConstant: 16).isActive = true
         domainIcon.contentMode = .scaleAspectFit
         
-        domainText.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(domainText)
-        domainText.leadingAnchor.constraint(equalTo: domainIcon.trailingAnchor, constant: 12).isActive = true
-        domainText.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12).isActive = true
-        domainText.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12).isActive = true
-        domainText.font = UIFont.systemFont(ofSize: 12, weight: .regular)
-        domainText.textColor = .darkGray
-        
         title.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(title)
-        title.topAnchor.constraint(equalTo: domainText.bottomAnchor, constant: 12).isActive = true
-        title.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0).isActive = true
-        title.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0).isActive = true
+        title.leadingAnchor.constraint(equalTo: domainIcon.trailingAnchor, constant: 12).isActive = true
+        title.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12).isActive = true
+        title.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12).isActive = true
         title.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         title.lineBreakMode = .byWordWrapping
         title.numberOfLines = 0
         
+        domainText.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(domainText)
+        domainText.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 12).isActive = true
+        domainText.leadingAnchor.constraint(equalTo: domainIcon.trailingAnchor, constant: 12).isActive = true
+        domainText.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0).isActive = true
+        domainText.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        domainText.textColor = .darkGray
+        
         author.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(author)
-        author.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0).isActive = true
-        author.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 12).isActive = true
+        author.leadingAnchor.constraint(equalTo: domainIcon.trailingAnchor, constant: 12).isActive = true
+        author.topAnchor.constraint(equalTo: domainText.bottomAnchor, constant: 12).isActive = true
         author.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         author.textColor = .black
         
         timestamp.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(timestamp)
         timestamp.leadingAnchor.constraint(equalTo: author.trailingAnchor, constant: 12).isActive = true
-        timestamp.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 12).isActive = true
+        timestamp.topAnchor.constraint(equalTo: domainText.bottomAnchor, constant: 12).isActive = true
         timestamp.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         timestamp.textColor = .darkGray
         
         upvotes.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(upvotes)
-        upvotes.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0).isActive = true
+        upvotes.leadingAnchor.constraint(equalTo: domainIcon.trailingAnchor, constant: 12).isActive = true
         upvotes.topAnchor.constraint(equalTo: author.bottomAnchor, constant: 12).isActive = true
         upvotes.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12).isActive = true
         upvotes.font = UIFont.systemFont(ofSize: 12, weight: .regular)

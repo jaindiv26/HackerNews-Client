@@ -216,5 +216,11 @@ TopStoriesCellDelegate
             UserDefaults.standard.set([storyId], forKey: Constants.bookmarkedIds)
         }
     }
+    
+    func shareStory(model: HNModel) {
+        let shareText = "Check out this story " + model.url
+        let vc = UIActivityViewController(activityItems: [shareText], applicationActivities: [])
+        present(vc, animated: true)
+    }
 
 }

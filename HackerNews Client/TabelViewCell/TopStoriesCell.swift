@@ -31,7 +31,8 @@ extension UIImageView {
 }
 
 protocol TopStoriesCellDelegate {
-    func didTapBookmarkToggleFromCell(model : HNModel)
+    func didTapBookmarkToggleFromCell(model: HNModel)
+    func shareStory(model: HNModel)
 }
 
 class TopStoriesCell: UITableViewCell {
@@ -43,6 +44,7 @@ class TopStoriesCell: UITableViewCell {
     let timestamp = UILabel.init(frame: CGRect.zero)
     let upvotes = UILabel.init(frame: CGRect.zero)
     let commentsCount = UILabel.init(frame: CGRect.zero)
+    let shareButton = UIButton(type: .system)
     let bookmarkButton = UIButton(type: .system)
     
     var model: HNModel?
@@ -106,12 +108,26 @@ class TopStoriesCell: UITableViewCell {
         commentsCount.textColor = .darkGray
         
         
+        shareButton.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(shareButton)
+        shareButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12).isActive = true
+        shareButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12).isActive = true
+        shareButton.setImage(UIImage(named: "share"), for: .normal)
+        shareButton.addTarget(self, action:#selector(shareStory), for: UIControl.Event.touchUpInside)
+        
         bookmarkButton.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(bookmarkButton)
-        bookmarkButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12).isActive = true
+        bookmarkButton.trailingAnchor.constraint(equalTo: shareButton.leadingAnchor, constant: -12).isActive = true
         bookmarkButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12).isActive = true
         bookmarkButton.setImage(UIImage(named: "bookmark_16px"), for: .normal)
         bookmarkButton.addTarget(self, action:#selector(didTapBookmarkButton), for: UIControl.Event.touchUpInside)
+    }
+    
+    @objc func shareStory() {
+        guard let model = model else {
+            return
+        }
+        delegate?.shareStory(model: model)
     }
     
     required init?(coder aDecoder: NSCoder) {

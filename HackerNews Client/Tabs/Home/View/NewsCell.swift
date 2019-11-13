@@ -120,6 +120,7 @@ private extension NewsCell {
     
     func createViews() {
         
+        contentView.backgroundColor = .systemGray4
         contentView.addSubview(iconBackGroundView)
         iconBackGroundView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,
                                                     constant: UIConstants.sidePadding).isActive = true

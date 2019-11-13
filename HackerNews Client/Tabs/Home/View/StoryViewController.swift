@@ -16,13 +16,59 @@ class StoryViewController: UIViewController, UITableViewDelegate{
     var newsModel = HNModel.init()
     var viewModel: StoryViewModel?
     
+    private lazy var commentsMainView: UIView = {
+        let view = UIView.init()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private lazy var moreDetailsMainView: UIView = {
+        let view = UIView.init()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private lazy var commentsSubView: UIView = {
+        let view = UIView.init()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray4
+        view.layer.cornerRadius = UIConstants.cornerRadius
+        return view
+    }()
+    
+    private lazy var moreDetailsSubView: UIView = {
+        let view = UIView.init()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray4
+        view.layer.cornerRadius = UIConstants.cornerRadius
+        return view
+    }()
+    
+    private lazy var commentsLabel: UILabel = {
+        let label = UILabel.init(frame: CGRect.zero)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 25, weight: .bold)
+        label.text = "Comments"
+        return label
+    }()
+    
+    private lazy var moreDetailsLabel: UILabel = {
+        let label = UILabel.init(frame: CGRect.zero)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 25, weight: .bold)
+        label.text = "More Details"
+        return label
+    }()
+    
     private lazy var tabelView: UITableView = {
         let tableView = UITableView.init(frame: CGRect.zero)
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.backgroundColor = .systemGray4
         tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
         tableView.separatorInset = .zero
         tableView.rowHeight = UITableView.automaticDimension
         tableView.keyboardDismissMode = .onDrag
+        tableView.layer.cornerRadius = UIConstants.cornerRadius
         return tableView
     }()
     
@@ -43,7 +89,9 @@ class StoryViewController: UIViewController, UITableViewDelegate{
     private lazy var webView: WKWebView = {
         let view = WKWebView(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        view.backgroundColor = .systemGray4
+        view.layer.cornerRadius = UIConstants.cornerRadius
+        view.layer.masksToBounds = true
         return view
     }()
     
@@ -95,39 +143,87 @@ private extension StoryViewController {
     func createViews() {
         
         navigationItem.title = newsModel.title
+    
+        if (newsModel.commentCount == 0) {
+            showWebView()
+        } else {
+            showCommentsAndWebview()
+            setUpTableView(tabelView)
+        }
+        showWebViewActivityIndicator(show: true)
+        setUpWebView(webView)
+    }
+    
+    func showCommentsAndWebview() {
+
+        view.addSubview(commentsMainView)
+        commentsMainView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
+        commentsMainView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+        commentsMainView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+        commentsMainView.heightAnchor.constraint(equalToConstant: view.frame.height/2).isActive = true
         
-        tabelView.dataSource = self
-        view.addSubview(tabelView)
-        tabelView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        tabelView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        tabelView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        tabelView.heightAnchor.constraint(equalToConstant: view.frame.height/2).isActive = true
-        tabelView.register(NewsCell.self,
-                           forCellReuseIdentifier: NewsCell.self.description())
-        tabelView.delegate = self
+        commentsMainView.addSubview(commentsLabel)
+        commentsLabel.leadingAnchor.constraint(equalTo: commentsMainView.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
+        commentsLabel.topAnchor.constraint(equalTo: commentsMainView.topAnchor, constant: 100).isActive = true
+        commentsLabel.trailingAnchor.constraint(equalTo: commentsMainView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
+        
+        commentsMainView.addSubview(commentsSubView)
+        commentsSubView.leadingAnchor.constraint(equalTo: commentsMainView.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
+        commentsSubView.topAnchor.constraint(equalTo: commentsLabel.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
+        commentsSubView.trailingAnchor.constraint(equalTo: commentsMainView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
+        commentsSubView.bottomAnchor.constraint(equalTo: commentsMainView.bottomAnchor, constant: 0).isActive = true
+        
+        commentsMainView.addSubview(tabelView)
+        tabelView.leadingAnchor.constraint(equalTo: commentsSubView.leadingAnchor).isActive = true
+        tabelView.trailingAnchor.constraint(equalTo: commentsSubView.trailingAnchor).isActive = true
+        tabelView.topAnchor.constraint(equalTo: commentsSubView.topAnchor).isActive = true
+        tabelView.bottomAnchor.constraint(equalTo: commentsSubView.bottomAnchor).isActive = true
         
         tabelView.addSubview(tabelViewActivityIndicator)
         tabelViewActivityIndicator.centerYAnchor.constraint(equalTo: tabelView.centerYAnchor).isActive = true
         tabelViewActivityIndicator.centerXAnchor.constraint(equalTo: tabelView.centerXAnchor).isActive = true
         showTabelViewActivityIndicator(show: true)
         
-        view.addSubview(webView)
-        webView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
-        webView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
-        webView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
-        if (newsModel.commentsId.count == 0) {
-            webView.topAnchor.constraint(equalTo: view.topAnchor, constant: 40).isActive = true
-        } else {
-            webView.topAnchor.constraint(equalTo: tabelView.bottomAnchor, constant: 0).isActive = true
-        }
+        //More Details View
+        
+        view.addSubview(moreDetailsMainView)
+        moreDetailsMainView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
+        moreDetailsMainView.topAnchor.constraint(equalTo: commentsMainView.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
+        moreDetailsMainView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+        moreDetailsMainView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -80).isActive = true
+        
+        moreDetailsMainView.addSubview(moreDetailsLabel)
+        moreDetailsLabel.leadingAnchor.constraint(equalTo: moreDetailsMainView.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
+        moreDetailsLabel.topAnchor.constraint(equalTo: moreDetailsMainView.topAnchor, constant: 0).isActive = true
+        moreDetailsLabel.trailingAnchor.constraint(equalTo: moreDetailsMainView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
+        
+        moreDetailsMainView.addSubview(moreDetailsSubView)
+        moreDetailsSubView.leadingAnchor.constraint(equalTo: moreDetailsMainView.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
+        moreDetailsSubView.topAnchor.constraint(equalTo: moreDetailsLabel.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
+        moreDetailsSubView.trailingAnchor.constraint(equalTo: moreDetailsMainView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
+        moreDetailsSubView.bottomAnchor.constraint(equalTo: moreDetailsMainView.bottomAnchor, constant: -UIConstants.verticalPadding).isActive = true
+        
+        moreDetailsSubView.addSubview(webView)
+        webView.leadingAnchor.constraint(equalTo: moreDetailsSubView.leadingAnchor, constant: 0).isActive = true
+        webView.trailingAnchor.constraint(equalTo: moreDetailsSubView.trailingAnchor, constant: 0).isActive = true
+        webView.bottomAnchor.constraint(equalTo: moreDetailsSubView.bottomAnchor, constant: 0).isActive = true
+        webView.topAnchor.constraint(equalTo: moreDetailsSubView.topAnchor, constant: 0).isActive = true
         
         webView.addSubview(webViewActivityIndicator)
         webViewActivityIndicator.centerYAnchor.constraint(equalTo: webView.centerYAnchor, constant: 0).isActive = true
         webViewActivityIndicator.centerXAnchor.constraint(equalTo: webView.centerXAnchor, constant: 0).isActive = true
+    }
+    
+    func showWebView() {
+        view.addSubview(webView)
+        webView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
+        webView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+        webView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+        webView.topAnchor.constraint(equalTo: view.topAnchor, constant: 80).isActive = true
         
-        showWebViewActivityIndicator(show: true)
-        setUpWebView(webView)
-        setUpTableView(tabelView)
+        webView.addSubview(webViewActivityIndicator)
+        webViewActivityIndicator.centerYAnchor.constraint(equalTo: webView.centerYAnchor, constant: 0).isActive = true
+        webViewActivityIndicator.centerXAnchor.constraint(equalTo: webView.centerXAnchor, constant: 0).isActive = true
     }
     
     func setUpWebView(_ webView: WKWebView) {

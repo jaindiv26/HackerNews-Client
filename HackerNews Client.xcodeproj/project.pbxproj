@@ -88,12 +88,100 @@
 		FC4C6D8F237BF3B90028A515 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				FC4C6D87237BF31B0028A515 /* ToastView.swift */,
-				FC4C6D89237BF33A0028A515 /* ErrorView.swift */,
 				FC4C6D8B237BF3770028A515 /* BaseViewController.swift */,
+				FC4C6D89237BF33A0028A515 /* ErrorView.swift */,
 				FC4C6D8D237BF3940028A515 /* Extensions.swift */,
+				FC4C6D87237BF31B0028A515 /* ToastView.swift */,
 			);
 			path = Common;
+			sourceTree = "<group>";
+		};
+		FC4C6D90237BF6310028A515 /* Tabs */ = {
+			isa = PBXGroup;
+			children = (
+				FC4C6D91237BF64A0028A515 /* Home */,
+				FC4C6D97237BF6E00028A515 /* View */,
+				FC4C6D95237BF6C10028A515 /* Bookmarks */,
+				FC4C6D93237BF6A60028A515 /* Profile */,
+			);
+			path = Tabs;
+			sourceTree = "<group>";
+		};
+		FC4C6D91237BF64A0028A515 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				FCA078492379919B00D84628 /* Model */,
+				FCA07843237990E400D84628 /* ViewModel */,
+				FC4C6D92237BF6560028A515 /* View */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		FC4C6D92237BF6560028A515 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				FC071C8C2379B69100C82830 /* NewsCell.swift */,
+				FCA078472379917100D84628 /* TopStoriesCell.swift */,
+				FCA078292379412200D84628 /* HomeViewController.swift */,
+				FC071C8A2379AEB900C82830 /* StoryViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		FC4C6D93237BF6A60028A515 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				FC4C6D94237BF6AF0028A515 /* View */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		FC4C6D94237BF6AF0028A515 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				FCD6B72F237A270B00EB714F /* ProfileViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		FC4C6D95237BF6C10028A515 /* Bookmarks */ = {
+			isa = PBXGroup;
+			children = (
+				FC4C6D96237BF6CF0028A515 /* View */,
+			);
+			path = Bookmarks;
+			sourceTree = "<group>";
+		};
+		FC4C6D96237BF6CF0028A515 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				FCA0783C2379420100D84628 /* BookmarkViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		FC4C6D97237BF6E00028A515 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				FCA0783A2379419000D84628 /* MainTabController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		FC4C6D98237BF71D0028A515 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				FC4C6D99237BF7270028A515 /* View */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		FC4C6D99237BF7270028A515 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				FCD6B72D237A0CC400EB714F /* WelcomeViewController.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		FCA078192379412200D84628 = {
@@ -117,12 +205,10 @@
 		FCA078242379412200D84628 /* HackerNews Client */ = {
 			isa = PBXGroup;
 			children = (
+				FC4C6D98237BF71D0028A515 /* Authentication */,
+				FC4C6D90237BF6310028A515 /* Tabs */,
 				FC4C6D8F237BF3B90028A515 /* Common */,
-				FCA078492379919B00D84628 /* Model */,
-				FCA078462379915E00D84628 /* TabelViewCell */,
-				FCA07843237990E400D84628 /* ViewModel */,
 				FCA0783E23794F6B00D84628 /* Constants */,
-				FCA078392379416A00D84628 /* ViewController */,
 				FCA078252379412200D84628 /* AppDelegate.swift */,
 				FCA078272379412200D84628 /* SceneDelegate.swift */,
 				FCA0782E2379412B00D84628 /* Assets.xcassets */,
@@ -130,19 +216,6 @@
 				FCA078332379412B00D84628 /* Info.plist */,
 			);
 			path = "HackerNews Client";
-			sourceTree = "<group>";
-		};
-		FCA078392379416A00D84628 /* ViewController */ = {
-			isa = PBXGroup;
-			children = (
-				FCA078292379412200D84628 /* HomeViewController.swift */,
-				FCA0783A2379419000D84628 /* MainTabController.swift */,
-				FCA0783C2379420100D84628 /* BookmarkViewController.swift */,
-				FC071C8A2379AEB900C82830 /* StoryViewController.swift */,
-				FCD6B72D237A0CC400EB714F /* WelcomeViewController.swift */,
-				FCD6B72F237A270B00EB714F /* ProfileViewController.swift */,
-			);
-			path = ViewController;
 			sourceTree = "<group>";
 		};
 		FCA0783E23794F6B00D84628 /* Constants */ = {
@@ -159,15 +232,6 @@
 				FCA07844237990F400D84628 /* HomeViewModel.swift */,
 			);
 			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		FCA078462379915E00D84628 /* TabelViewCell */ = {
-			isa = PBXGroup;
-			children = (
-				FCA078472379917100D84628 /* TopStoriesCell.swift */,
-				FC071C8C2379B69100C82830 /* NewsCell.swift */,
-			);
-			path = TabelViewCell;
 			sourceTree = "<group>";
 		};
 		FCA078492379919B00D84628 /* Model */ = {

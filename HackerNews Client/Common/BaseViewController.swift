@@ -61,6 +61,7 @@ public class BaseViewController: UIViewController, ErrorViewDelegate {
 private extension BaseViewController {
     
     func createViews() {
+        errorView.isHidden = true
         errorView.delegate = self
         errorView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(errorView)
@@ -122,6 +123,3 @@ private extension BaseViewController {
     }
     
 }
-
-
-

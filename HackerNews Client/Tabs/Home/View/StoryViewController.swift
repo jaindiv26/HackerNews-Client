@@ -10,11 +10,7 @@ import Foundation
 import UIKit
 import WebKit
 
-class StoryViewController: UIViewController, UITableViewDelegate{
-    
-    var list: [HNModel] = []
-    var newsModel = HNModel.init()
-    var viewModel: StoryViewModel?
+class StoryViewController: BaseViewController {
     
     private lazy var commentsMainView: UIView = {
         let view = UIView.init()
@@ -44,7 +40,7 @@ class StoryViewController: UIViewController, UITableViewDelegate{
     private lazy var tableView: UITableView = {
         let tableView = UITableView.init(frame: CGRect.zero)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.backgroundColor = .systemGray4
+        tableView.backgroundColor = .systemGray6
         tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
         tableView.separatorInset = .zero
         tableView.rowHeight = UITableView.automaticDimension
@@ -76,7 +72,7 @@ class StoryViewController: UIViewController, UITableViewDelegate{
     private lazy var moreDetailsSubView: UIView = {
         let view = UIView.init()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemGray4
+        view.backgroundColor = .systemGray6
         view.layer.cornerRadius = UIConstants.cornerRadius
         view.layer.borderWidth = 0.5
         view.layer.borderColor = UIColor.systemGray2.cgColor
@@ -97,12 +93,14 @@ class StoryViewController: UIViewController, UITableViewDelegate{
         return indicator
     }()
     
-    var observation: NSKeyValueObservation? = nil
-    var request = URLRequest.init(url: URL.init(fileURLWithPath: ""))
+    private let newsModel: HNModel
+    private var viewModel: StoryViewModel?
+    private var observation: NSKeyValueObservation?
+    private var webviewUrlRequest: URLRequest?
     
-    init (model: HNModel) {
-        super.init(nibName: nil, bundle: nil)
+    init(model: HNModel) {
         self.newsModel = model
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -113,8 +111,10 @@ class StoryViewController: UIViewController, UITableViewDelegate{
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         createViews()
-        viewModel = StoryViewModel.init(delegate: self)
-        viewModel?.getData(newsModel.commentsId, currentCount: 0, pageCount: 8)
+        showTableViewActivityIndicator(show: true)
+        viewModel = StoryViewModel.init(commentIds: newsModel.commentsId,
+                                        delegate: self)
+        viewModel?.getData()
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -135,7 +135,9 @@ class StoryViewController: UIViewController, UITableViewDelegate{
     
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         showWebViewActivityIndicator(show: false)
-        self.webView.load(request)
+        if let webviewUrlRequest = webviewUrlRequest {
+            webView.load(webviewUrlRequest)
+        }
     }
     
 }
@@ -143,12 +145,11 @@ class StoryViewController: UIViewController, UITableViewDelegate{
 private extension StoryViewController {
     
     func createViews() {
-        
         navigationItem.title = newsModel.title
-    
-        if (newsModel.commentCount == 0) {
+        if newsModel.commentsId.isEmpty {
             showWebView()
-        } else {
+        }
+        else {
             showCommentsAndWebview()
             setUpTableView(tableView)
         }
@@ -187,7 +188,6 @@ private extension StoryViewController {
         tableView.addSubview(tableViewActivityIndicator)
         tableViewActivityIndicator.centerYAnchor.constraint(equalTo: tableView.centerYAnchor).isActive = true
         tableViewActivityIndicator.centerXAnchor.constraint(equalTo: tableView.centerXAnchor).isActive = true
-        showtableViewActivityIndicator(show: true)
         
         //More Details View
         
@@ -223,7 +223,8 @@ private extension StoryViewController {
         webViewActivityIndicator.centerYAnchor.constraint(equalTo: webView.centerYAnchor).isActive = true
         webViewActivityIndicator.centerXAnchor.constraint(equalTo: webView.centerXAnchor).isActive = true
         
-        commentsMainView.heightAnchor.constraint(equalTo: moreDetailsMainView.heightAnchor, multiplier: 1).isActive = true
+        commentsMainView.heightAnchor.constraint(equalTo: moreDetailsMainView.heightAnchor,
+                                                 multiplier: 1).isActive = true
     }
     
     func showWebView() {
@@ -234,27 +235,34 @@ private extension StoryViewController {
         webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         
         webView.addSubview(webViewActivityIndicator)
-        webViewActivityIndicator.centerYAnchor.constraint(equalTo: webView.centerYAnchor, constant: 0).isActive = true
-        webViewActivityIndicator.centerXAnchor.constraint(equalTo: webView.centerXAnchor, constant: 0).isActive = true
+        webViewActivityIndicator.centerYAnchor.constraint(equalTo: webView.centerYAnchor).isActive = true
+        webViewActivityIndicator.centerXAnchor.constraint(equalTo: webView.centerXAnchor).isActive = true
     }
     
     func setUpWebView(_ webView: WKWebView) {
-        let contestUrl = URL(string: newsModel.url)
-        request = URLRequest(url: contestUrl!)
-        webView.load(request)
-        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
+        guard let commentsUrl = URL(string: newsModel.url) else {
+            return
+        }
+        webviewUrlRequest = URLRequest(url: commentsUrl)
+        if let webviewUrlRequest = webviewUrlRequest {
+            webView.load(webviewUrlRequest)
+        }
+        webView.addObserver(self,
+                            forKeyPath: #keyPath(WKWebView.estimatedProgress),
+                            options: .new,
+                            context: nil)
     }
     
     func setUpTableView(_ tableView: UITableView) {
         tableView.dataSource = self
-        tableView.delegate = self
         tableView.register(CommentsCell.self, forCellReuseIdentifier: CommentsCell.self.description())
     }
     
-    func showtableViewActivityIndicator(show: Bool) {
+    func showTableViewActivityIndicator(show: Bool) {
         if show {
             tableViewActivityIndicator.startAnimating()
-        } else {
+        }
+        else {
             tableViewActivityIndicator.stopAnimating()
         }
     }
@@ -262,7 +270,8 @@ private extension StoryViewController {
     func showWebViewActivityIndicator(show: Bool) {
         if show {
             webViewActivityIndicator.startAnimating()
-        } else {
+        }
+        else {
             webViewActivityIndicator.stopAnimating()
         }
     }
@@ -272,39 +281,32 @@ private extension StoryViewController {
 extension StoryViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return list.count
+        return viewModel?.getTotalItems() ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: CommentsCell.self.description(), for: indexPath) as? CommentsCell {
-            cell.setData(model: list[indexPath.row])
+         if let item = viewModel?.getItem(forRow: indexPath.row),
+            let cell = tableView.dequeueReusableCell(withIdentifier: CommentsCell.self.description(), for: indexPath) as? CommentsCell {
+            cell.setData(model: item)
             return cell
         }
         return UITableViewCell()
     }
 }
 
-extension StoryViewController: StoryViewDelegate {
+extension StoryViewController: StoryBaseViewModelDelegate {
     
-    func getComments(_ list: [HNModel]) {
-        self.list += list
-        
-        let temp = self.list.sorted(by: { (m1, m2) -> Bool in
-            m1.id == m2.id
-        })
-        
-        self.list.removeAll()
-        self.list = temp
-        
-        for i in list {
-            if (i.commentsId.count > 0) {
-                //viewModel?.idsFetched(i.commentsId, fetchedCount: 0, noOfItemsToFetch: 5)
-            }
-        }
-        
-        DispatchQueue.main.async {
-            self.showtableViewActivityIndicator(show: false)
-            self.tableView.reloadData()
-        }
+    func reloadData() {
+        showTableViewActivityIndicator(show: false)
+        tableView.reloadData()
     }
+    
+    func storyBaseViewModel(_ storyBaseViewModel: StoryBaseViewModel,
+                            didFailToFetchResultsWithError error: Error?) {
+        showTableViewActivityIndicator(show: false)
+        showWebViewActivityIndicator(show: false)
+        showErrorMessage(error?.localizedDescription)
+    }
+    
+    
 }

@@ -1,5 +1,5 @@
 //
-//  NewsCell.swift
+//  CommentsCell.swift
 //  HackerNews Client
 //
 //  Created by Divyansh  Jain on 11/11/19.
@@ -119,8 +119,8 @@ class CommentsCell: UITableViewCell {
 private extension CommentsCell {
     
     func createViews() {
-        
-        contentView.backgroundColor = .systemGray4
+        backgroundColor = .clear
+        contentView.backgroundColor = .clear
         contentView.addSubview(iconBackGroundView)
         iconBackGroundView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,
                                                     constant: UIConstants.sidePadding).isActive = true

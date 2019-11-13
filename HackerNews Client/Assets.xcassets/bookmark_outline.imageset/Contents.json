@@ -2,15 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "share.png",
+      "filename" : "bookmark_outline.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "bookmark_outline@2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
+      "filename" : "bookmark_outline@3x.png",
       "scale" : "3x"
     }
   ],

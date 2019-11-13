@@ -6,102 +6,149 @@
 //  Copyright © 2019 Divyansh  Jain. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import GoogleSignIn
 
-class WelcomeViewController: UIViewController, GIDSignInDelegate {
+class WelcomeViewController: UIViewController {
+    
+    private lazy var bgImageView: UIImageView = {
+        let imageView = UIImageView.init()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: UIConstants.Image.bgLaunch.rawValue)
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    
+    private lazy var topImageView: UIImageView = {
+        let imageView = UIImageView.init()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: UIConstants.Image.app.rawValue)
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel.init()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
+        label.text = "HackerFeed"
+        label.textColor = .white
+        return label
+    }()
+    
+    private lazy var subTitleLabel: UILabel = {
+        let label = UILabel.init()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        label.text = "Everything you love about tech and more"
+        label.textColor = .white
+        return label
+    }()
+    
+    private lazy var googleSignInButton: UIButton = {
+        let button = UIButton.init(frame: CGRect.zero)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = UIConstants.cornerRadius
+        button.backgroundColor = .white
+        button.setTitle("Get started with Google", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        button.setTitleColor(.black, for: .normal)
+        button.setImage(UIImage(named: UIConstants.Image.google.rawValue), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsets(top: UIConstants.sidePadding,
+                                              left: UIConstants.sidePadding,
+                                              bottom: UIConstants.sidePadding,
+                                              right: UIConstants.sidePadding)
+        button.imageView?.contentMode = .scaleAspectFit
+        return button
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
-        
-        let backgrounImage = UIImageView.init(frame: CGRect.zero)
-        backgrounImage.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(backgrounImage)
-        backgrounImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
-        backgrounImage.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
-        backgrounImage.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
-        backgrounImage.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
-        backgrounImage.image = UIImage(named: "launchScreen")
-        backgrounImage.contentMode = .scaleAspectFill
-        
-        let phoneHeight = view.frame.height / 4
-        
-        let hackerNewsIcon = UIImageView.init(frame: CGRect.zero)
-        hackerNewsIcon.translatesAutoresizingMaskIntoConstraints = false
-        backgrounImage.addSubview(hackerNewsIcon)
-        hackerNewsIcon.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0).isActive = true
-        hackerNewsIcon.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -phoneHeight).isActive = true
-        hackerNewsIcon.image = UIImage(named: "logo")
-        hackerNewsIcon.contentMode = .scaleAspectFill
-        
-        let hackerNewsLabel = UILabel.init(frame: CGRect.zero)
-        hackerNewsLabel.translatesAutoresizingMaskIntoConstraints = false
-        backgrounImage.addSubview(hackerNewsLabel)
-        hackerNewsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0).isActive = true
-        hackerNewsLabel.topAnchor.constraint(equalTo: hackerNewsIcon.bottomAnchor, constant: 12).isActive = true
-        hackerNewsLabel.font = UIFont.systemFont(ofSize: 25, weight: .bold)
-        hackerNewsLabel.text = "HackerFeed"
-        hackerNewsLabel.textColor = .white
-        
-        let hackerNewsQuote = UILabel.init(frame: CGRect.zero)
-        hackerNewsQuote.translatesAutoresizingMaskIntoConstraints = false
-        backgrounImage.addSubview(hackerNewsQuote)
-        hackerNewsQuote.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0).isActive = true
-        hackerNewsQuote.topAnchor.constraint(equalTo: hackerNewsLabel.bottomAnchor, constant: 12).isActive = true
-        hackerNewsQuote.font = UIFont.systemFont(ofSize: 18, weight: .regular)
-        hackerNewsQuote.text = "Everything you love about tech"
-        hackerNewsQuote.textColor = .white
-        
-        GIDSignIn.sharedInstance()?.presentingViewController = self
-        GIDSignIn.sharedInstance().clientID = Constants.googleSignInClientId
-        GIDSignIn.sharedInstance().delegate = self
-        GIDSignIn.sharedInstance()?.restorePreviousSignIn()
-        
-        let icon = UIImage(named: "google_icon")!
-        
-        let googleSignInButton = UIButton.init(frame: CGRect.zero)
-        googleSignInButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(googleSignInButton)
-        googleSignInButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24).isActive = true
-        googleSignInButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24).isActive = true
-        googleSignInButton.topAnchor.constraint(equalTo: hackerNewsQuote.bottomAnchor, constant: 50).isActive = true
-        googleSignInButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
-        googleSignInButton.layer.cornerRadius = 22
-        googleSignInButton.backgroundColor = .white
-        googleSignInButton.setTitle("Get started with Google", for: .normal)
-        googleSignInButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
-        googleSignInButton.setTitleColor(.black, for: .normal)
-        googleSignInButton.setImage(icon, for: .normal)
-        googleSignInButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -20, bottom: 0, right: 0)
-        googleSignInButton.addTarget(self, action:#selector(startGoogleSignIn), for: .touchUpInside)
+        view.backgroundColor = .clear
+        createViews()
+        setUpGoogleSignIn(GIDSignIn.sharedInstance())
     }
     
-    @objc func startGoogleSignIn() {
-        GIDSignIn.sharedInstance().signIn()
-    }
-    
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
+    func application(_ app: UIApplication,
+                     open url: URL,
+                     options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
         return GIDSignIn.sharedInstance().handle(url)
     }
     
-    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!,
-              withError error: Error!) {
-        if let error = error {
-            if (error as NSError).code == GIDSignInErrorCode.hasNoAuthInKeychain.rawValue {
-                print("The user has not signed in before or they have since signed out.")
-            } else {
-                print("\(error.localizedDescription)")
-            }
-            return
-        }
+}
+
+private extension WelcomeViewController {
+    
+    func createViews() {
+        view.addSubview(bgImageView)
+        bgImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        bgImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        bgImageView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        bgImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        
+        googleSignInButton.addTarget(self, action:#selector(didTapGoogleSignInButton), for: .touchUpInside)
+        view.addSubview(googleSignInButton)
+        googleSignInButton.leadingAnchor.constraint(equalTo: view.leadingAnchor,
+                                                    constant: 2*UIConstants.sidePadding).isActive = true
+        googleSignInButton.trailingAnchor.constraint(equalTo: view.trailingAnchor,
+                                                     constant: -2*UIConstants.sidePadding).isActive = true
+        googleSignInButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                                                   constant: -2*UIConstants.verticalPadding).isActive = true
+        googleSignInButton.heightAnchor.constraint(equalToConstant: UIConstants.buttonHeight).isActive = true
+        
+        bgImageView.addSubview(subTitleLabel)
+        subTitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        subTitleLabel.bottomAnchor.constraint(equalTo: googleSignInButton.topAnchor,
+                                              constant: -4*UIConstants.verticalPadding).isActive = true
+        
+        bgImageView.addSubview(titleLabel)
+        titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        titleLabel.bottomAnchor.constraint(equalTo: subTitleLabel.topAnchor,
+                                           constant: -UIConstants.betweenPadding).isActive = true
+        
+        bgImageView.addSubview(topImageView)
+        topImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        topImageView.bottomAnchor.constraint(equalTo: titleLabel.topAnchor,
+                                             constant: -UIConstants.verticalPadding).isActive = true
+    }
+    
+    func setUpGoogleSignIn(_ gIDSignIn: GIDSignIn) {
+        gIDSignIn.presentingViewController = self
+        gIDSignIn.clientID = Constants.googleSignInClientId
+        gIDSignIn.delegate = self
+    }
+    
+    @objc func didTapGoogleSignInButton() {
+        GIDSignIn.sharedInstance().signIn()
+    }
+    
+    func googleSignInSuccessfull(forGoogleUser user: GIDGoogleUser) {
         UserDefaults.standard.set(user.profile.givenName, forKey: Constants.userName)
         UserDefaults.standard.set(true, forKey: Constants.isLoggedIn)
-        
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.window?.rootViewController = MainTabController()
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            appDelegate.window?.rootViewController = MainTabController()
+        }
+    }
+    
+}
+
+extension WelcomeViewController: GIDSignInDelegate {
+    
+    func sign(_ signIn: GIDSignIn!,
+              didSignInFor user: GIDGoogleUser!,
+              withError error: Error!) {
+        if let error = error {
+            var errorMessage = error.localizedDescription
+            if errorMessage.isEmpty {
+                errorMessage = "Something went wrong!"
+            }
+            let alertVC = UIAlertController.init(title: "Error", message: errorMessage, preferredStyle: .alert)
+            alertVC.addAction(UIAlertAction.init(title: "Ok", style: .default, handler: nil))
+            present(alertVC, animated: true, completion: nil)
+            return
+        }
+        googleSignInSuccessfull(forGoogleUser: user)
     }
     
 }

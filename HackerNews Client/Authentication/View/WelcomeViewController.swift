@@ -11,7 +11,7 @@ import GoogleSignIn
 
 class WelcomeViewController: UIViewController {
     
-    private lazy var bgImageView: UIImageView = {
+    private lazy var splashImageView: UIImageView = {
         let imageView = UIImageView.init()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(named: UIConstants.Image.bgLaunch.rawValue)
@@ -19,7 +19,7 @@ class WelcomeViewController: UIViewController {
         return imageView
     }()
     
-    private lazy var topImageView: UIImageView = {
+    private lazy var appIconImageView: UIImageView = {
         let imageView = UIImageView.init()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(named: UIConstants.Image.app.rawValue)
@@ -27,7 +27,7 @@ class WelcomeViewController: UIViewController {
         return imageView
     }()
     
-    private lazy var titleLabel: UILabel = {
+    private lazy var appNameLabel: UILabel = {
         let label = UILabel.init()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
@@ -36,7 +36,7 @@ class WelcomeViewController: UIViewController {
         return label
     }()
     
-    private lazy var subTitleLabel: UILabel = {
+    private lazy var quoteLabel: UILabel = {
         let label = UILabel.init()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
@@ -81,11 +81,12 @@ class WelcomeViewController: UIViewController {
 private extension WelcomeViewController {
     
     func createViews() {
-        view.addSubview(bgImageView)
-        bgImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        bgImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        bgImageView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        bgImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        
+        view.addSubview(splashImageView)
+        splashImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        splashImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        splashImageView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        splashImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
         googleSignInButton.addTarget(self, action:#selector(didTapGoogleSignInButton), for: .touchUpInside)
         view.addSubview(googleSignInButton)
@@ -97,19 +98,19 @@ private extension WelcomeViewController {
                                                    constant: -2*UIConstants.verticalPadding).isActive = true
         googleSignInButton.heightAnchor.constraint(equalToConstant: UIConstants.buttonHeight).isActive = true
         
-        bgImageView.addSubview(subTitleLabel)
-        subTitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        subTitleLabel.bottomAnchor.constraint(equalTo: googleSignInButton.topAnchor,
+        splashImageView.addSubview(quoteLabel)
+        quoteLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        quoteLabel.bottomAnchor.constraint(equalTo: googleSignInButton.topAnchor,
                                               constant: -4*UIConstants.verticalPadding).isActive = true
         
-        bgImageView.addSubview(titleLabel)
-        titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        titleLabel.bottomAnchor.constraint(equalTo: subTitleLabel.topAnchor,
+        splashImageView.addSubview(appNameLabel)
+        appNameLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        appNameLabel.bottomAnchor.constraint(equalTo: quoteLabel.topAnchor,
                                            constant: -UIConstants.betweenPadding).isActive = true
         
-        bgImageView.addSubview(topImageView)
-        topImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        topImageView.bottomAnchor.constraint(equalTo: titleLabel.topAnchor,
+        splashImageView.addSubview(appIconImageView)
+        appIconImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        appIconImageView.bottomAnchor.constraint(equalTo: appNameLabel.topAnchor,
                                              constant: -UIConstants.verticalPadding).isActive = true
     }
     

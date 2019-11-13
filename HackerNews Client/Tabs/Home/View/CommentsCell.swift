@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class NewsCell: UITableViewCell {
+class CommentsCell: UITableViewCell {
     
     private lazy var iconBackGroundView: UIView = {
         let view = UIView.init()
@@ -116,7 +116,7 @@ class NewsCell: UITableViewCell {
     
 }
 
-private extension NewsCell {
+private extension CommentsCell {
     
     func createViews() {
         

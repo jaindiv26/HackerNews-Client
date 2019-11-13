@@ -248,7 +248,7 @@ private extension StoryViewController {
     func setUpTableView(_ tableView: UITableView) {
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(NewsCell.self, forCellReuseIdentifier: NewsCell.self.description())
+        tableView.register(CommentsCell.self, forCellReuseIdentifier: CommentsCell.self.description())
     }
     
     func showtableViewActivityIndicator(show: Bool) {
@@ -276,7 +276,7 @@ extension StoryViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: NewsCell.self.description(), for: indexPath) as? NewsCell {
+        if let cell = tableView.dequeueReusableCell(withIdentifier: CommentsCell.self.description(), for: indexPath) as? CommentsCell {
             cell.setData(model: list[indexPath.row])
             return cell
         }

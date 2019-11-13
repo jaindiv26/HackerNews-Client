@@ -108,7 +108,10 @@ private extension ProfileViewController {
         alertVC.addAction(UIAlertAction.init(title: "No", style: .cancel, handler: nil))
         alertVC.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
             GIDSignIn.sharedInstance().signOut()
-            UserDefaults.standard.set(false, forKey: Constants.isLoggedIn)
+            
+            if let bundleID = Bundle.main.bundleIdentifier {
+                UserDefaults.standard.removePersistentDomain(forName: bundleID)
+            }
            
             if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
                 appDelegate.window?.rootViewController = WelcomeViewController()

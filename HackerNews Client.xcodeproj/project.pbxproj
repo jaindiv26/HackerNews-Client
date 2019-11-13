@@ -14,6 +14,7 @@
 		FC4C6D8A237BF33A0028A515 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4C6D89237BF33A0028A515 /* ErrorView.swift */; };
 		FC4C6D8C237BF3770028A515 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4C6D8B237BF3770028A515 /* BaseViewController.swift */; };
 		FC4C6D8E237BF3940028A515 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4C6D8D237BF3940028A515 /* Extensions.swift */; };
+		FC4C6D9B237BFC7C0028A515 /* StoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4C6D9A237BFC7C0028A515 /* StoryViewModel.swift */; };
 		FCA078262379412200D84628 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA078252379412200D84628 /* AppDelegate.swift */; };
 		FCA078282379412200D84628 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA078272379412200D84628 /* SceneDelegate.swift */; };
 		FCA0782A2379412200D84628 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA078292379412200D84628 /* HomeViewController.swift */; };
@@ -39,6 +40,7 @@
 		FC4C6D89237BF33A0028A515 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		FC4C6D8B237BF3770028A515 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		FC4C6D8D237BF3940028A515 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		FC4C6D9A237BFC7C0028A515 /* StoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewModel.swift; sourceTree = "<group>"; };
 		FCA078222379412200D84628 /* HackerNews Client.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "HackerNews Client.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FCA078252379412200D84628 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FCA078272379412200D84628 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 			isa = PBXGroup;
 			children = (
 				FCA07844237990F400D84628 /* HomeViewModel.swift */,
+				FC4C6D9A237BFC7C0028A515 /* StoryViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC4C6D9B237BFC7C0028A515 /* StoryViewModel.swift in Sources */,
 				FC071C8B2379AEB900C82830 /* StoryViewController.swift in Sources */,
 				FCA0784B237991A800D84628 /* HNModel.swift in Sources */,
 				FCA0782A2379412200D84628 /* HomeViewController.swift in Sources */,

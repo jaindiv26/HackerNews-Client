@@ -11,30 +11,46 @@ import UIKit
 import WebKit
 
 class StoryViewController:
-UIViewController,
-    HomeViewModelDelegate,
-    UITableViewDataSource,
-    UITableViewDelegate,
-    WKNavigationDelegate,
-    WKUIDelegate
+    UIViewController,
+    UITableViewDelegate
 {
-    func homeViewModel(_ homeViewModel: HomeViewModel, didFailToFetchResultsWithError error: Error?) {
-        
-    }
-    
-    func reloadData() {
-        
-    }
-    
     
     var list: [HNModel] = []
     var newsModel = HNModel.init()
-    var viewModel: HomeViewModel?
-    let tbv = UITableView.init(frame: CGRect.zero)
-    var tabelViewActivityIndicator: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
-    var webViewActivityIndicator: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
+    var viewModel: StoryViewModel?
+    
+    private lazy var tabelView: UITableView = {
+        let tbv =  UITableView.init(frame: CGRect.zero)
+        tbv.translatesAutoresizingMaskIntoConstraints = false
+        tbv.rowHeight = UITableView.automaticDimension
+        tbv.estimatedRowHeight = 200
+        tbv.separatorStyle = UITableViewCell.SeparatorStyle.none
+        tbv.separatorInset = .zero
+        return tbv
+    }()
+    
+    private lazy var tabelViewActivityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
+    
+    private lazy var webViewActivityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
+    
+    private lazy var webView: WKWebView = {
+        let view = WKWebView(frame: CGRect.zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .white
+        return view
+    }()
+    
     var observation: NSKeyValueObservation? = nil
-    var webView = WKWebView(frame: CGRect.zero)
     var request = URLRequest.init(url: URL.init(fileURLWithPath: ""))
     
     init (model: HNModel) {
@@ -48,60 +64,10 @@ UIViewController,
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         view.backgroundColor = .white
-        
-        navigationItem.title = newsModel.title
-        
-        tbv.translatesAutoresizingMaskIntoConstraints = false
-        tbv.dataSource = self
-        view.addSubview(tbv)
-        tbv.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12).isActive = true
-        tbv.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12).isActive = true
-        tbv.topAnchor.constraint(equalTo: view.topAnchor, constant: 40).isActive = true
-        tbv.heightAnchor.constraint(equalToConstant: view.frame.height / 2).isActive = true
-        tbv.register(NewsCell.self, forCellReuseIdentifier: "newsCell")
-        tbv.delegate = self
-        tbv.rowHeight = UITableView.automaticDimension
-        tbv.estimatedRowHeight = 200
-        tbv.separatorStyle = UITableViewCell.SeparatorStyle.none
-        tbv.separatorColor = .darkGray
-        tbv.separatorInset = .zero
-        
-        tabelViewActivityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        tbv.addSubview(tabelViewActivityIndicator)
-        tabelViewActivityIndicator.centerYAnchor.constraint(equalTo: tbv.centerYAnchor, constant: 0).isActive = true
-        tabelViewActivityIndicator.centerXAnchor.constraint(equalTo: tbv.centerXAnchor, constant: 0).isActive = true
-        tabelViewActivityIndicator.hidesWhenStopped = true
-        showTabelViewActivityIndicator(show: true)
-        
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(webView)
-        webView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
-        webView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
-        webView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
-        if (newsModel.commentsId.count == 0) {
-            webView.topAnchor.constraint(equalTo: view.topAnchor, constant: 40).isActive = true
-        } else {
-            webView.topAnchor.constraint(equalTo: tbv.bottomAnchor, constant: 0).isActive = true
-        }
-        webView.uiDelegate = self
-        webView.navigationDelegate = self
-        webView.backgroundColor = .white
-        let contestUrl = URL(string: newsModel.url)
-        request = URLRequest(url: contestUrl!)
-        webView.load(request)
-        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
-        
-        webViewActivityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        webView.addSubview(webViewActivityIndicator)
-        webViewActivityIndicator.centerYAnchor.constraint(equalTo: webView.centerYAnchor, constant: 0).isActive = true
-        webViewActivityIndicator.centerXAnchor.constraint(equalTo: webView.centerXAnchor, constant: 0).isActive = true
-        webViewActivityIndicator.hidesWhenStopped = true
-        showWebViewActivityIndicator(show: true)
-        
-        viewModel = HomeViewModel.init(delegate: self)
-        //viewModel?.idsFetched(newsModel.commentsId, fetchedCount: 0, noOfItemsToFetch: 8)
+        createViews()
+        viewModel = StoryViewModel.init(delegate: self)
+        viewModel?.getData(newsModel.commentsId, currentCount: 0, pageCount: 8)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -110,6 +76,73 @@ UIViewController,
                 showWebViewActivityIndicator(show: false)
             }
         }
+    }
+    
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        showWebViewActivityIndicator(show: false)
+    }
+    
+    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        showWebViewActivityIndicator(show: true)
+    }
+    
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        showWebViewActivityIndicator(show: false)
+        self.webView.load(request)
+    }
+    
+}
+
+private extension StoryViewController {
+    
+    func createViews() {
+        
+        navigationItem.title = newsModel.title
+        
+        tabelView.dataSource = self
+        view.addSubview(tabelView)
+        tabelView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12).isActive = true
+        tabelView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12).isActive = true
+        tabelView.topAnchor.constraint(equalTo: view.topAnchor, constant: 40).isActive = true
+        tabelView.heightAnchor.constraint(equalToConstant: view.frame.height / 2).isActive = true
+        tabelView.register(NewsCell.self, forCellReuseIdentifier: "newsCell")
+        tabelView.delegate = self
+        
+        tabelView.addSubview(tabelViewActivityIndicator)
+        tabelViewActivityIndicator.centerYAnchor.constraint(equalTo: tabelView.centerYAnchor, constant: 0).isActive = true
+        tabelViewActivityIndicator.centerXAnchor.constraint(equalTo: tabelView.centerXAnchor, constant: 0).isActive = true
+        showTabelViewActivityIndicator(show: true)
+        
+        view.addSubview(webView)
+        webView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
+        webView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+        webView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+        if (newsModel.commentsId.count == 0) {
+            webView.topAnchor.constraint(equalTo: view.topAnchor, constant: 40).isActive = true
+        } else {
+            webView.topAnchor.constraint(equalTo: tabelView.bottomAnchor, constant: 0).isActive = true
+        }
+        
+        webView.addSubview(webViewActivityIndicator)
+        webViewActivityIndicator.centerYAnchor.constraint(equalTo: webView.centerYAnchor, constant: 0).isActive = true
+        webViewActivityIndicator.centerXAnchor.constraint(equalTo: webView.centerXAnchor, constant: 0).isActive = true
+        
+        showWebViewActivityIndicator(show: true)
+        setUpWebView(webView)
+        setUpTableView(tabelView)
+    }
+    
+    func setUpWebView(_ webView: WKWebView) {
+        let contestUrl = URL(string: newsModel.url)
+        request = URLRequest(url: contestUrl!)
+        webView.load(request)
+        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
+    }
+    
+    func setUpTableView(_ tableView: UITableView) {
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(NewsCell.self, forCellReuseIdentifier: NewsCell.self.description())
     }
     
     func showTabelViewActivityIndicator(show: Bool) {
@@ -127,19 +160,10 @@ UIViewController,
             webViewActivityIndicator.stopAnimating()
         }
     }
+    
+}
 
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        showWebViewActivityIndicator(show: false)
-    }
-
-    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        showWebViewActivityIndicator(show: true)
-    }
-
-    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        showWebViewActivityIndicator(show: false)
-        self.webView.load(request)
-    }
+extension StoryViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return list.count
@@ -151,8 +175,11 @@ UIViewController,
         cell.selectionStyle = .none
         return cell
     }
+}
+
+extension StoryViewController: StoryViewDelegate {
     
-    func getItemModel(list: [HNModel]) {
+    func getComments(_ list: [HNModel]) {
         self.list += list
         
         let temp = self.list.sorted(by: { (m1, m2) -> Bool in
@@ -169,9 +196,9 @@ UIViewController,
         }
         
         DispatchQueue.main.async {
-            self.tbv.separatorStyle = UITableViewCell.SeparatorStyle.singleLine
+            self.tabelView.separatorStyle = UITableViewCell.SeparatorStyle.singleLine
             self.showTabelViewActivityIndicator(show: false)
-            self.tbv.reloadData()
+            self.tabelView.reloadData()
         }
     }
 }

@@ -19,8 +19,10 @@ public class ErrorView: UIView {
     private lazy var titleLabel: UILabel = {
         let label = UILabel.init()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 24, weight: .medium)
         label.textAlignment = .center
+        label.textColor = .darkGray
+        label.numberOfLines = 4
         return label
     }()
     
@@ -29,7 +31,7 @@ public class ErrorView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .clear
         button.setTitle("Retry", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         return button
     }()
     
@@ -44,9 +46,12 @@ public class ErrorView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     public func setMessage(_ message: String) {
         titleLabel.text = message
+    }
+    
+    public func hideRetryButton(_ isHidden: Bool) {
+        retryButton.isHidden = isHidden
     }
 }
 
@@ -77,3 +82,4 @@ private extension ErrorView {
     
     
 }
+

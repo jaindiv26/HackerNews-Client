@@ -21,6 +21,9 @@ struct Constants {
     public static let userName = "userName"
     public static let userReadCount = "userReadCount"
     public static let sharingMessage = "Check out this story"
+    public static let bookmarkRemovedNotificationKey = "bookmarkRemovedNotificationKey"
+    public static let bookmarkUpdatedNotificationKey = "bookmarkUpdatedNotificationKey"
+    public static let searchMinCharacter = 2
 }
 
 struct UIConstants {

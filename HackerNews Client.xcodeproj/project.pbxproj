@@ -15,6 +15,9 @@
 		FC4C6D8C237BF3770028A515 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4C6D8B237BF3770028A515 /* BaseViewController.swift */; };
 		FC4C6D8E237BF3940028A515 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4C6D8D237BF3940028A515 /* Extensions.swift */; };
 		FC4C6D9B237BFC7C0028A515 /* StoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4C6D9A237BFC7C0028A515 /* StoryViewModel.swift */; };
+		FC4CAD05237C14BD002106C1 /* BookmarkViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4CAD04237C14BD002106C1 /* BookmarkViewModel.swift */; };
+		FC4CAD0A237C1599002106C1 /* StoryBaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4CAD09237C1599002106C1 /* StoryBaseViewModel.swift */; };
+		FC4CAD0C237C15B5002106C1 /* StoryBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4CAD0B237C15B5002106C1 /* StoryBaseViewController.swift */; };
 		FCA078262379412200D84628 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA078252379412200D84628 /* AppDelegate.swift */; };
 		FCA078282379412200D84628 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA078272379412200D84628 /* SceneDelegate.swift */; };
 		FCA0782A2379412200D84628 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA078292379412200D84628 /* HomeViewController.swift */; };
@@ -41,6 +44,9 @@
 		FC4C6D8B237BF3770028A515 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		FC4C6D8D237BF3940028A515 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		FC4C6D9A237BFC7C0028A515 /* StoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewModel.swift; sourceTree = "<group>"; };
+		FC4CAD04237C14BD002106C1 /* BookmarkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkViewModel.swift; sourceTree = "<group>"; };
+		FC4CAD09237C1599002106C1 /* StoryBaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryBaseViewModel.swift; sourceTree = "<group>"; };
+		FC4CAD0B237C15B5002106C1 /* StoryBaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryBaseViewController.swift; sourceTree = "<group>"; };
 		FCA078222379412200D84628 /* HackerNews Client.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "HackerNews Client.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FCA078252379412200D84628 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FCA078272379412200D84628 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -101,8 +107,8 @@
 		FC4C6D90237BF6310028A515 /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
+				FC4CAD06237C157A002106C1 /* Common */,
 				FC4C6D91237BF64A0028A515 /* Home */,
-				FC4C6D97237BF6E00028A515 /* View */,
 				FC4C6D95237BF6C10028A515 /* Bookmarks */,
 				FC4C6D93237BF6A60028A515 /* Profile */,
 			);
@@ -149,6 +155,7 @@
 		FC4C6D95237BF6C10028A515 /* Bookmarks */ = {
 			isa = PBXGroup;
 			children = (
+				FC4CAD03237C14A6002106C1 /* ViewModel */,
 				FC4C6D96237BF6CF0028A515 /* View */,
 			);
 			path = Bookmarks;
@@ -158,14 +165,6 @@
 			isa = PBXGroup;
 			children = (
 				FCA0783C2379420100D84628 /* BookmarkViewController.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		FC4C6D97237BF6E00028A515 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				FCA0783A2379419000D84628 /* MainTabController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -184,6 +183,40 @@
 				FCD6B72D237A0CC400EB714F /* WelcomeViewController.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		FC4CAD03237C14A6002106C1 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				FC4CAD04237C14BD002106C1 /* BookmarkViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		FC4CAD06237C157A002106C1 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				FC4CAD08237C1587002106C1 /* ViewModel */,
+				FC4CAD07237C1582002106C1 /* View */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		FC4CAD07237C1582002106C1 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				FCA0783A2379419000D84628 /* MainTabController.swift */,
+				FC4CAD0B237C15B5002106C1 /* StoryBaseViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		FC4CAD08237C1587002106C1 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				FC4CAD09237C1599002106C1 /* StoryBaseViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		FCA078192379412200D84628 = {
@@ -378,15 +411,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC4C6D9B237BFC7C0028A515 /* StoryViewModel.swift in Sources */,
+				FC4CAD05237C14BD002106C1 /* BookmarkViewModel.swift in Sources */,
 				FC071C8B2379AEB900C82830 /* StoryViewController.swift in Sources */,
 				FCA0784B237991A800D84628 /* HNModel.swift in Sources */,
 				FCA0782A2379412200D84628 /* HomeViewController.swift in Sources */,
 				FCA078262379412200D84628 /* AppDelegate.swift in Sources */,
 				FCA0783B2379419000D84628 /* MainTabController.swift in Sources */,
 				FCA078482379917100D84628 /* TopStoriesCell.swift in Sources */,
+				FC4CAD0C237C15B5002106C1 /* StoryBaseViewController.swift in Sources */,
 				FCA078282379412200D84628 /* SceneDelegate.swift in Sources */,
 				FCA07845237990F400D84628 /* HomeViewModel.swift in Sources */,
 				FC4C6D88237BF31B0028A515 /* ToastView.swift in Sources */,
+				FC4CAD0A237C1599002106C1 /* StoryBaseViewModel.swift in Sources */,
 				FCA0783D2379420100D84628 /* BookmarkViewController.swift in Sources */,
 				FC4C6D8A237BF33A0028A515 /* ErrorView.swift in Sources */,
 				FCD6B730237A270B00EB714F /* ProfileViewController.swift in Sources */,

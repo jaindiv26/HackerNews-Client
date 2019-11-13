@@ -23,13 +23,32 @@ public class BaseViewController: UIViewController, ErrorViewDelegate {
     
     public func showErrorView(_ errorMessage: String?) {
         view.bringSubviewToFront(errorView)
-        errorView.setMessage(errorMessage ?? "Something went wrong!\nPlease try again later.")
+        if let errorMessage = errorMessage, !errorMessage.isEmpty {
+            errorView.setMessage(errorMessage)
+        }
+        else {
+            errorView.setMessage("👨‍🔧\nSomething went wrong!\nPlease try again later.")
+        }
         errorView.isHidden = false
+        errorView.hideRetryButton(false)
+    }
+    
+    public func hideErrorView() {
+        errorView.isHidden = true
+    }
+    
+    public func hideRetryButton(_ isHidden: Bool) {
+        errorView.hideRetryButton(isHidden)
     }
     
     public func showErrorMessage(_ errorMessage: String?) {
         toastView.backgroundColor = .red
-        toastView.setMessage(errorMessage ?? "Something went wrong!")
+        if let errorMessage = errorMessage, !errorMessage.isEmpty {
+            toastView.setMessage(errorMessage)
+        }
+        else {
+            toastView.setMessage("👨‍🔧\nSomething went wrong!")
+        }
         showToastView()
     }
     
@@ -45,6 +64,10 @@ private extension BaseViewController {
         errorView.delegate = self
         errorView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(errorView)
+        errorView.leadingAnchor.constraint(equalTo: view.leadingAnchor,
+                                           constant: UIConstants.sidePadding).isActive = true
+        errorView.trailingAnchor.constraint(equalTo: view.trailingAnchor,
+                                            constant: -UIConstants.sidePadding).isActive = true
         errorView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         errorView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
@@ -99,3 +122,6 @@ private extension BaseViewController {
     }
     
 }
+
+
+

@@ -114,7 +114,7 @@ class TopStoriesCell: UITableViewCell {
          fatalError("init(coder:) has not been implemented")
      }
     
-    public func setData(model: HNModel) {
+    public func setData(_ model: HNModel) {
         self.model = model
 
         if let url = URL(string: Constants.domainIconEndpoint + model.url) {
@@ -282,7 +282,8 @@ private extension TopStoriesCell {
         guard let model = model else {
             return
         }
-        delegate?.topStoriesCell(self, didTapBookmarkButtonForData: model)
+        delegate?.topStoriesCell(self,
+                                 didTapBookmarkButtonForData: model)
     }
     
 }

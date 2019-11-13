@@ -10,23 +10,20 @@ import Foundation
 import UIKit
 import WebKit
 
-class StoryViewController:
-    UIViewController,
-    UITableViewDelegate
-{
+class StoryViewController: UIViewController, UITableViewDelegate{
     
     var list: [HNModel] = []
     var newsModel = HNModel.init()
     var viewModel: StoryViewModel?
     
     private lazy var tabelView: UITableView = {
-        let tbv =  UITableView.init(frame: CGRect.zero)
-        tbv.translatesAutoresizingMaskIntoConstraints = false
-        tbv.rowHeight = UITableView.automaticDimension
-        tbv.estimatedRowHeight = 200
-        tbv.separatorStyle = UITableViewCell.SeparatorStyle.none
-        tbv.separatorInset = .zero
-        return tbv
+        let tableView = UITableView.init(frame: CGRect.zero)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
+        tableView.separatorInset = .zero
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.keyboardDismissMode = .onDrag
+        return tableView
     }()
     
     private lazy var tabelViewActivityIndicator: UIActivityIndicatorView = {
@@ -101,16 +98,17 @@ private extension StoryViewController {
         
         tabelView.dataSource = self
         view.addSubview(tabelView)
-        tabelView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12).isActive = true
-        tabelView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12).isActive = true
-        tabelView.topAnchor.constraint(equalTo: view.topAnchor, constant: 40).isActive = true
-        tabelView.heightAnchor.constraint(equalToConstant: view.frame.height / 2).isActive = true
-        tabelView.register(NewsCell.self, forCellReuseIdentifier: "newsCell")
+        tabelView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        tabelView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        tabelView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        tabelView.heightAnchor.constraint(equalToConstant: view.frame.height/2).isActive = true
+        tabelView.register(NewsCell.self,
+                           forCellReuseIdentifier: NewsCell.self.description())
         tabelView.delegate = self
         
         tabelView.addSubview(tabelViewActivityIndicator)
-        tabelViewActivityIndicator.centerYAnchor.constraint(equalTo: tabelView.centerYAnchor, constant: 0).isActive = true
-        tabelViewActivityIndicator.centerXAnchor.constraint(equalTo: tabelView.centerXAnchor, constant: 0).isActive = true
+        tabelViewActivityIndicator.centerYAnchor.constraint(equalTo: tabelView.centerYAnchor).isActive = true
+        tabelViewActivityIndicator.centerXAnchor.constraint(equalTo: tabelView.centerXAnchor).isActive = true
         showTabelViewActivityIndicator(show: true)
         
         view.addSubview(webView)
@@ -170,10 +168,11 @@ extension StoryViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "newsCell", for: indexPath) as! NewsCell
-        cell.setData(model: list[indexPath.row])
-        cell.selectionStyle = .none
-        return cell
+        if let cell = tableView.dequeueReusableCell(withIdentifier: NewsCell.self.description(), for: indexPath) as? NewsCell {
+            cell.setData(model: list[indexPath.row])
+            return cell
+        }
+        return UITableViewCell()
     }
 }
 
@@ -196,7 +195,6 @@ extension StoryViewController: StoryViewDelegate {
         }
         
         DispatchQueue.main.async {
-            self.tabelView.separatorStyle = UITableViewCell.SeparatorStyle.singleLine
             self.showTabelViewActivityIndicator(show: false)
             self.tabelView.reloadData()
         }

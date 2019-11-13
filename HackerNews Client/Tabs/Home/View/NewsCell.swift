@@ -12,18 +12,17 @@ import UIKit
 class NewsCell: UITableViewCell {
     
     private lazy var iconBackGroundView: UIView = {
-        let view = UILabel.init(frame: CGRect.zero)
+        let view = UIView.init()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .systemGray5
-        view.layer.cornerRadius = 6
+        view.layer.cornerRadius = UIConstants.cornerRadius
         return view
     }()
     
     private lazy var author: UILabel = {
-        let label = UILabel.init(frame: CGRect.zero)
+        let label = UILabel.init()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
-        label.textColor = .black
         return label
     }()
     
@@ -90,29 +89,29 @@ class NewsCell: UITableViewCell {
         
         if (calendar.component(.hour, from: date) <= 24) {
             if (calendar.component(.hour, from: date) < 10) {
-                string = String(calendar.component(.hour, from: date)) + "hour ago"
+                string = String(calendar.component(.hour, from: date)) + " hour ago"
             } else {
-                string = String(calendar.component(.hour, from: date)) + "hours ago"
+                string = String(calendar.component(.hour, from: date)) + " hours ago"
             }
         }
         
         if (calendar.component(.minute, from: date) <= 60) {
             if (calendar.component(.minute, from: date) < 10) {
-                string = String(calendar.component(.minute, from: date)) + "minute ago"
+                string = String(calendar.component(.minute, from: date)) + " minute ago"
             } else {
-                string = String(calendar.component(.minute, from: date)) + "minutes ago"
+                string = String(calendar.component(.minute, from: date)) + " minutes ago"
             }
         }
         
         if (calendar.component(.second, from: date) <= 24) {
             if (calendar.component(.minute, from: date) < 10) {
-                string = String(calendar.component(.minute, from: date)) + "second ago"
+                string = String(calendar.component(.minute, from: date)) + " second ago"
             } else {
-                string = String(calendar.component(.minute, from: date)) + "seconds ago"
+                string = String(calendar.component(.minute, from: date)) + " seconds ago"
             }
         }
         
-        timestamp.text = string
+        timestamp.text = " • \(string)"
     }
     
 }
@@ -122,33 +121,41 @@ private extension NewsCell {
     func createViews() {
         
         contentView.addSubview(iconBackGroundView)
-        iconBackGroundView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0).isActive = true
-        iconBackGroundView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16).isActive = true
+        iconBackGroundView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,
+                                                    constant: UIConstants.sidePadding).isActive = true
+        iconBackGroundView.topAnchor.constraint(equalTo: contentView.topAnchor,
+                                                constant: UIConstants.verticalPadding).isActive = true
         iconBackGroundView.widthAnchor.constraint(equalToConstant: 32).isActive = true
         iconBackGroundView.heightAnchor.constraint(equalToConstant: 32).isActive = true
         
         iconBackGroundView.addSubview(authorPrefix)
-        authorPrefix.centerXAnchor.constraint(equalTo: iconBackGroundView.centerXAnchor, constant: 0).isActive = true
-        authorPrefix.centerYAnchor.constraint(equalTo: iconBackGroundView.centerYAnchor, constant: 0).isActive = true
+        authorPrefix.centerXAnchor.constraint(equalTo: iconBackGroundView.centerXAnchor).isActive = true
+        authorPrefix.centerYAnchor.constraint(equalTo: iconBackGroundView.centerYAnchor).isActive = true
         
         contentView.addSubview(comment)
-        comment.leadingAnchor.constraint(equalTo: iconBackGroundView.trailingAnchor, constant: UIConstants.sidePadding).isActive = true
-        comment.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
-        comment.topAnchor.constraint(equalTo: contentView.topAnchor, constant: UIConstants.verticalPadding).isActive = true
+        comment.leadingAnchor.constraint(equalTo: iconBackGroundView.trailingAnchor,
+                                         constant: UIConstants.sidePadding).isActive = true
+        comment.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
+                                          constant: -UIConstants.sidePadding).isActive = true
+        comment.topAnchor.constraint(equalTo: iconBackGroundView.topAnchor).isActive = true
         
         contentView.addSubview(author)
-        author.topAnchor.constraint(equalTo: comment.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
-        author.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UIConstants.verticalPadding).isActive = true
-        author.leadingAnchor.constraint(equalTo: comment.leadingAnchor, constant: 0).isActive = true
+        author.topAnchor.constraint(equalTo: comment.bottomAnchor,
+                                    constant: UIConstants.verticalPadding).isActive = true
+        author.leadingAnchor.constraint(equalTo: comment.leadingAnchor).isActive = true
         
         contentView.addSubview(timestamp)
-        timestamp.topAnchor.constraint(equalTo: comment.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
-        timestamp.leadingAnchor.constraint(equalTo: author.trailingAnchor, constant: UIConstants.sidePadding).isActive = true
-        timestamp.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UIConstants.verticalPadding).isActive = true
+        timestamp.leadingAnchor.constraint(equalTo: author.trailingAnchor).isActive = true
+        timestamp.centerYAnchor.constraint(equalTo: author.centerYAnchor).isActive = true
         
         contentView.addSubview(cellSeperator)
-        cellSeperator.leadingAnchor.constraint(equalTo: iconBackGroundView.leadingAnchor, constant: 0).isActive = true
-        cellSeperator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0).isActive = true
-        cellSeperator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0).isActive = true
+        cellSeperator.topAnchor.constraint(equalTo: author.bottomAnchor,
+                                           constant: UIConstants.verticalPadding).isActive = true
+        cellSeperator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,
+                                               constant: UIConstants.sidePadding).isActive = true
+        cellSeperator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
+                                                constant: -UIConstants.sidePadding).isActive = true
+        cellSeperator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
+        cellSeperator.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
     }
 }

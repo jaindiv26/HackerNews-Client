@@ -11,102 +11,153 @@ import UIKit
 import GoogleSignIn
 
 class ProfileViewController: UIViewController {
+
+    private lazy var bgImageView: UIImageView = {
+        let imageView = UIImageView.init()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: UIConstants.Image.bgLaunch.rawValue)
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
     
-    let userGreeting = UILabel.init(frame: CGRect.zero)
-    let noOfStoriesRead = UILabel.init(frame: CGRect.zero)
+    private lazy var topImageView: UIImageView = {
+        let imageView = UIImageView.init()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: UIConstants.Image.app.rawValue)
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel.init()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
+        label.text = "HackerFeed"
+        label.textColor = .white
+        return label
+    }()
+    
+    private lazy var subTitleLabel: UILabel = {
+        let label = UILabel.init()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        label.text = "Everything you love about tech and more"
+        label.textColor = .white
+        return label
+    }()
+    
+    private lazy var logoutButton: UIButton = {
+        let button = UIButton.init(frame: CGRect.zero)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .clear
+        button.setTitle("Logout", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        button.setTitleColor(.red, for: .normal)
+        return button
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationController?.setNavigationBarHidden(true, animated: true)
-        
-        let backgrounImage = UIImageView.init(frame: CGRect.zero)
-        backgrounImage.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(backgrounImage)
-        backgrounImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
-        backgrounImage.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
-        backgrounImage.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
-        backgrounImage.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
-        backgrounImage.image = UIImage(named: "launchScreen")
-        backgrounImage.contentMode = .scaleAspectFill
-        
-        _ = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: Selector(("setUserGreeting")), userInfo: nil, repeats: true)
-        
-        userGreeting.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(userGreeting)
-        userGreeting.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0).isActive = true
-        userGreeting.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 0).isActive = true
-        userGreeting.textColor = .white
-        userGreeting.font = UIFont.systemFont(ofSize: 25, weight: .bold)
-        
-        setGreeting()
-        
-        noOfStoriesRead.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(noOfStoriesRead)
-        noOfStoriesRead.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0).isActive = true
-        noOfStoriesRead.topAnchor.constraint(equalTo: userGreeting.bottomAnchor, constant: 12).isActive = true
-        noOfStoriesRead.textColor = .white
-        noOfStoriesRead.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        createViews()
+        setTimer()
+    }
+}
 
-        let logoutButton = UIButton.init(frame: CGRect.zero)
-        logoutButton.translatesAutoresizingMaskIntoConstraints = false
+private extension ProfileViewController {
+    
+    func createViews() {
+        view.addSubview(bgImageView)
+        bgImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        bgImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        bgImageView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        bgImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+
+        logoutButton.addTarget(self, action:#selector(didTapLogoutButton), for: .touchUpInside)
         view.addSubview(logoutButton)
-        logoutButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12).isActive = true
-        logoutButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12).isActive = true
-        logoutButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -95).isActive = true
-        logoutButton.addTarget(self, action:#selector(logout), for: UIControl.Event.touchUpInside)
-        logoutButton.backgroundColor = .red
-        logoutButton.setTitle("Logout", for: .normal)
-        logoutButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
-        logoutButton.setTitleColor(.white, for: .normal)
-        logoutButton.layer.borderColor = UIColor.black.cgColor
-        logoutButton.layer.cornerRadius = 16
+        logoutButton.leadingAnchor.constraint(equalTo: view.leadingAnchor,
+                                                    constant: 2*UIConstants.sidePadding).isActive = true
+        logoutButton.trailingAnchor.constraint(equalTo: view.trailingAnchor,
+                                                     constant: -2*UIConstants.sidePadding).isActive = true
+        logoutButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                                                   constant: -2*UIConstants.verticalPadding).isActive = true
+        logoutButton.heightAnchor.constraint(equalToConstant: UIConstants.buttonHeight).isActive = true
+        
+        bgImageView.addSubview(subTitleLabel)
+        subTitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        subTitleLabel.bottomAnchor.constraint(equalTo: logoutButton.topAnchor,
+                                              constant: -4*UIConstants.verticalPadding).isActive = true
+        
+        bgImageView.addSubview(titleLabel)
+        titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        titleLabel.bottomAnchor.constraint(equalTo: subTitleLabel.topAnchor,
+                                          constant: -UIConstants.betweenPadding).isActive = true
     }
     
-    func setGreeting() {
+    func setTimer() {
+        _ = Timer.scheduledTimer(timeInterval: 1.0,
+                                 target: self,
+                                 selector: #selector(didUpdateTimer),
+                                 userInfo: nil,
+                                 repeats: true)
+    }
+    
+    @objc func didTapLogoutButton() {
+        let alertVC = UIAlertController.init(title: "Alert", message: "Do you really want to logout?", preferredStyle: .alert)
+        alertVC.addAction(UIAlertAction.init(title: "No", style: .cancel, handler: nil))
+        alertVC.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
+            GIDSignIn.sharedInstance().signOut()
+            UserDefaults.standard.set(false, forKey: Constants.isLoggedIn)
+           
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+                appDelegate.window?.rootViewController = WelcomeViewController()
+            }
+        }))
+        present(alertVC, animated: true, completion: nil)
+    }
+    
+    @objc func didUpdateTimer() {
+        setData()
+    }
+    
+    func setData() {
         let hour = Calendar.current.component(.hour, from: Date())
-        var time: String?
-        let user = UserDefaults.standard.value(forKey: Constants.userName) as? String
-        
-        if (hour > 0 && hour < 12) {
-            time = "Good morning, " + user!
+        if (hour >= 0 && hour < 12) {
+            if let userName = UserDefaults.standard.value(forKey: Constants.userName) as? String, !userName.isEmpty {
+                titleLabel.text = "Good morning, \(userName) !"
+            }
+            else {
+                titleLabel.text = "Good morning"
+            }
         }
-        
-        if (hour > 12 && hour < 18) {
-            time = "Good afternoon, " + user!
+        else if (hour >= 12 && hour < 18) {
+            if let userName = UserDefaults.standard.value(forKey: Constants.userName) as? String, !userName.isEmpty {
+                titleLabel.text = "Good afternoon, \(userName) !"
+            }
+            else {
+                titleLabel.text = "Good afternoon"
+            }
         }
-        
-        if (hour > 18 && hour < 21) {
-            time = "Good evening, " + user!
+        else if (hour >= 18 && hour <= 22) {
+            if let userName = UserDefaults.standard.value(forKey: Constants.userName) as? String, !userName.isEmpty {
+                titleLabel.text = "Good evening, \(userName) !"
+            }
+            else {
+                titleLabel.text = "Good evening"
+            }
         }
-        
-        if (hour > 21) {
-            time = "Good night, " + user!
-        }
-        
-        userGreeting.text = time
         
         let currentReadCount = UserDefaults.standard.value(forKey: Constants.userReadCount) as? Int ?? 0
-        if (currentReadCount == 0) {
-            noOfStoriesRead.text = "You haven't read any stories today"
+        if currentReadCount == 0 {
+            subTitleLabel.text = "You haven't read any stories today"
         }
-        if (currentReadCount == 1) {
-            noOfStoriesRead.text = "You you read " + String(currentReadCount) + " story today"
+        else if currentReadCount == 1 {
+            subTitleLabel.text = "You read \(currentReadCount) story today"
         }
         else {
-            noOfStoriesRead.text = "You you read " + String(currentReadCount) + " stories today"
+            subTitleLabel.text = "You read \(currentReadCount) stories today"
         }
     }
     
-    @objc func setUserGreeting() {
-        setGreeting()
-    }
-    
-    @objc func logout() {
-        GIDSignIn.sharedInstance().signOut()
-        UserDefaults.standard.set(false, forKey: Constants.isLoggedIn)
-        
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.window?.rootViewController = WelcomeViewController()
-    }
 }

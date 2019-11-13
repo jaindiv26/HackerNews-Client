@@ -12,16 +12,24 @@ import WebKit
 
 class StoryViewController:
 UIViewController,
-    ViewModelDelegate,
+    HomeViewModelDelegate,
     UITableViewDataSource,
     UITableViewDelegate,
     WKNavigationDelegate,
     WKUIDelegate
 {
+    func homeViewModel(_ homeViewModel: HomeViewModel, didFailToFetchResultsWithError error: Error?) {
+        
+    }
+    
+    func reloadData() {
+        
+    }
+    
     
     var list: [HNModel] = []
     var newsModel = HNModel.init()
-    var viewModel: HNViewModel?
+    var viewModel: HomeViewModel?
     let tbv = UITableView.init(frame: CGRect.zero)
     var tabelViewActivityIndicator: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
     var webViewActivityIndicator: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
@@ -92,8 +100,8 @@ UIViewController,
         webViewActivityIndicator.hidesWhenStopped = true
         showWebViewActivityIndicator(show: true)
         
-        viewModel = HNViewModel.init(delegate: self)
-        viewModel?.idsFetched(newsModel.commentsId, fetchedCount: 0, noOfItemsToFetch: 8)
+        viewModel = HomeViewModel.init(delegate: self)
+        //viewModel?.idsFetched(newsModel.commentsId, fetchedCount: 0, noOfItemsToFetch: 8)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -140,9 +148,6 @@ UIViewController,
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "newsCell", for: indexPath) as! NewsCell
         cell.setData(model: list[indexPath.row])
-        if (indexPath.row > 0 && list[indexPath.row - 1].id == list[indexPath.row].id) {
-            cell.setIndentation(leftIndentation: 20)
-        }
         cell.selectionStyle = .none
         return cell
     }
@@ -159,7 +164,7 @@ UIViewController,
         
         for i in list {
             if (i.commentsId.count > 0) {
-                viewModel?.idsFetched(i.commentsId, fetchedCount: 0, noOfItemsToFetch: 5)
+                //viewModel?.idsFetched(i.commentsId, fetchedCount: 0, noOfItemsToFetch: 5)
             }
         }
         

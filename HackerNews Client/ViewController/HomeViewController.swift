@@ -8,168 +8,185 @@
 
 import UIKit
 
-class HomeViewController:
-UIViewController,
-ViewModelDelegate,
-UITableViewDataSource,
-UITableViewDelegate,
-UISearchBarDelegate,
-TopStoriesCellDelegate
-{
+class HomeViewController: BaseViewController {
 
-    var list: [HNModel] = []
-    var filteredList: [HNModel] = []
-    var viewModel: HNViewModel?
+    private lazy var refreshControl = UIRefreshControl()
     
-    var refreshControl = UIRefreshControl()
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView.init(frame: CGRect.zero)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
+        tableView.separatorInset = .zero
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.keyboardDismissMode = .onDrag
+        return tableView
+    }()
     
-    let tbv = UITableView.init(frame: CGRect.zero)
-    let searchBar = UISearchBar.init(frame: CGRect.zero)
-    var indicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
-    var isSearching = false
+    private lazy var searchBar: UISearchBar = {
+        let searchBar = UISearchBar.init()
+        searchBar.placeholder = "Search for articles, websites..."
+        return searchBar
+    }()
+    
+    private lazy var indicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
+    
+    private lazy var viewModel: HomeViewModel? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .white
+        createViews()
+        viewModel = HomeViewModel.init(delegate: self)
+        viewModel?.getData()
+    }
+    
+    override public func didTapRetryButton(_ errorView: ErrorView) {
+        errorView.isHidden = true
+        indicatorView.startAnimating()
+        viewModel?.getData()
+    }
+}
 
-        searchBar.placeholder = " Search..."
-        searchBar.sizeToFit()
-        searchBar.isTranslucent = false
-        searchBar.backgroundImage = UIImage()
+private extension HomeViewController {
+    
+    func createViews() {
         searchBar.delegate = self
-        searchBar.searchBarStyle = UISearchBar.Style.default
+        searchBar.isUserInteractionEnabled = false
         navigationItem.titleView = searchBar
         
-        tbv.translatesAutoresizingMaskIntoConstraints = false
-        tbv.dataSource = self
-        view.addSubview(tbv)
-        tbv.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12).isActive = true
-        tbv.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12).isActive = true
-        tbv.topAnchor.constraint(equalTo: view.topAnchor, constant: 12).isActive = true
-        tbv.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
-        tbv.register(TopStoriesCell.self, forCellReuseIdentifier: "topStoriesCell")
-        tbv.delegate = self
-        tbv.rowHeight = UITableView.automaticDimension
-        tbv.estimatedRowHeight = 600
-        tbv.separatorStyle = UITableViewCell.SeparatorStyle.singleLine
-        tbv.separatorColor = .darkGray
-        tbv.separatorInset = .zero
-        tbv.isHidden = true
+        view.addSubview(tableView)
+        tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        tableView.topAnchor.constraint(equalTo: view.topAnchor,
+                                       constant: UIConstants.verticalPadding).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
         indicatorView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(indicatorView)
-        indicatorView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 0).isActive = true
-        indicatorView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0).isActive = true
+        indicatorView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        indicatorView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         indicatorView.startAnimating()
         
-        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        refreshControl.addTarget(self, action: #selector(refresh), for: UIControl.Event.valueChanged)
-        tbv.addSubview(refreshControl)
-        
-        viewModel = HNViewModel.init(delegate: self)
-        viewModel?.getTopStories()
+        refreshControl.addTarget(self,
+                                 action: #selector(didPullToRefresh),
+                                 for: UIControl.Event.valueChanged)
+        tableView.addSubview(refreshControl)
+        setUpTableView(tableView)
     }
     
-    @objc func refresh(sender:AnyObject) {
-       viewModel?.getTopStories()
+    func setUpTableView(_ tableView: UITableView) {
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(TopStoriesCell.self,
+                           forCellReuseIdentifier: TopStoriesCell.self.description())
     }
+    
+    @objc func didPullToRefresh(sender: AnyObject) {
+       viewModel?.doRefresh()
+    }
+    
+}
+
+extension HomeViewController: HomeViewModelDelegate {
+    
+    func reloadData() {
+        searchBar.isUserInteractionEnabled = true
+        indicatorView.stopAnimating()
+        refreshControl.endRefreshing()
+        tableView.isHidden = false
+        tableView.reloadData()
+    }
+    
+    func homeViewModel(_ homeViewModel: HomeViewModel,
+                       didFailToFetchResultsWithError error: Error?) {
+        indicatorView.stopAnimating()
+        refreshControl.endRefreshing()
+        tableView.reloadData()
+        if viewModel?.getTotalItems() ?? 0 == 0 {
+            searchBar.isUserInteractionEnabled = false
+            showErrorView(error?.localizedDescription)
+        }
+        else {
+            searchBar.isUserInteractionEnabled = true
+            showErrorMessage(error?.localizedDescription)
+        }
+    }
+    
+}
+
+extension HomeViewController: UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel?.getTotalItems() ?? 0
+    }
+      
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if let item = viewModel?.getItem(forRow: indexPath.row),
+            let cell = tableView.dequeueReusableCell(withIdentifier: TopStoriesCell.self.description(),
+                                                    for: indexPath) as? TopStoriesCell {
+            cell.setData(model: item)
+            cell.delegate = self
+            return cell
+        }
+        return UITableViewCell()
+    }
+      
+}
+
+extension HomeViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView,
+                   didSelectRowAt indexPath: IndexPath) {
+        guard let item = viewModel?.getItem(forRow: indexPath.row) else {
+            return
+        }
+        viewModel?.didClickItem()
+        navigationController?.pushViewController(StoryViewController.init(model: item), animated: true)
+    }
+    
+}
+
+extension HomeViewController: UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        self.searchBar.showsCancelButton = true
-        isSearching = true
+        searchBar.showsCancelButton = true
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.showsCancelButton = false
-        searchBar.text = ""
+        searchBar.text = nil
         searchBar.resignFirstResponder()
-        filteredList = list
-        tbv.reloadData()
-        isSearching = false
+        viewModel?.doSearch(forQuery: nil)
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        isSearching = true
-        if let searchText = searchBar.text {
-            filteredList = searchText.isEmpty ? list : list.filter {
-                $0.title.contains(searchText)
-            }
-            tbv.reloadData()
-        }
+        viewModel?.doSearch(forQuery: searchBar.text)
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        isSearching = true
-        if let searchText = searchBar.text {
-             filteredList = searchText.isEmpty ? list : list.filter {
-                 $0.title.contains(searchText)
-             }
-             tbv.reloadData()
-         }
+        viewModel?.doSearch(forQuery: searchBar.text)
     }
     
-    func getItemModel(list: [HNModel]) {
-        indicatorView.stopAnimating()
-        refreshControl.endRefreshing()
-        let temp = list.sorted(by: { (m1, m2) -> Bool in
-            m1.time > m2.time
-        })
-        self.list += temp
-        self.filteredList += list
-        
-        if (!isSearching) {
-            DispatchQueue.main.async {
-                self.tbv.isHidden = false
-                self.tbv.reloadData()
-            }
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let currentReadCount = UserDefaults.standard.value(forKey: Constants.userReadCount) as? Int
-        UserDefaults.standard.set((currentReadCount ?? 0) + 1, forKey: Constants.userReadCount)
-        self.navigationController?.pushViewController(StoryViewController.init(model: filteredList[indexPath.row]), animated: true)
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filteredList.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "topStoriesCell", for: indexPath) as! TopStoriesCell
-        cell.setData(model: filteredList[indexPath.row])
-        cell.selectionStyle = .none
-        cell.delegate = self
-        return cell
-    }
-    
-    public func didTapBookmarkToggleFromCell(model : HNModel) {
-        toggleBookmarkStory(model.id)
-        model.isBookmarked = !model.isBookmarked
-        tbv.reloadData()
-    }
-    
-    private func toggleBookmarkStory(_ storyId: Int) {
-        if var bookmarkedIds = UserDefaults.standard.value(forKey: Constants.bookmarkedIds) as? [Int] {
-            if let itemToRemoveIndex = bookmarkedIds.firstIndex(of: storyId) {
-                bookmarkedIds.remove(at: itemToRemoveIndex)
-            }
-            else {
-                bookmarkedIds.append(storyId)
-            }
-            UserDefaults.standard.set(bookmarkedIds, forKey: Constants.bookmarkedIds)
-        }
-        else {
-            UserDefaults.standard.set([storyId], forKey: Constants.bookmarkedIds)
-        }
-    }
-    
-    func shareStory(model: HNModel) {
-        let items: [Any] = ["Check out this story", URL(string: model.url)!]
-        let vc = UIActivityViewController(activityItems: items, applicationActivities: [])
-        present(vc, animated: true)
-    }
-
 }
 
+extension HomeViewController: TopStoriesCellDelegate {
+    
+    func topStoriesCell(_ topStoriesCell:TopStoriesCell,
+                        didTapBookmarkButtonForData data: HNModel) {
+        viewModel?.toggleBookmarkStory(data.id)
+        data.isBookmarked = !data.isBookmarked
+        tableView.reloadData()
+    }
+       
+    func topStoriesCell(_ topStoriesCell:TopStoriesCell,
+                        didTapShareButtonForData data: HNModel){
+        guard let url = URL(string: data.url) else {
+            return
+        }
+        let items: [Any] = [Constants.sharingMessage, url]
+        let sharingVC = UIActivityViewController(activityItems: items, applicationActivities: [])
+        present(sharingVC, animated: true)
+    }
+    
+}

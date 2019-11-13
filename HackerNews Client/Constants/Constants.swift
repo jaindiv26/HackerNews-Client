@@ -10,14 +10,17 @@ import UIKit
 
 struct Constants {
     
-    public static let topStoriesEndpoint = "https://hacker-news.firebaseio.com/v0/topstories.json"
-    public static let itemEndpoint = "https://hacker-news.firebaseio.com/v0/item/"
+    public static let apiBaseURL = "https://hacker-news.firebaseio.com/"
+    public static let apiVersion = "v0"
+    public static let topStoriesEndpoint = apiBaseURL + apiVersion + "/topstories.json"
+    public static let itemEndpoint = apiBaseURL + apiVersion + "/item/"
     public static let domainIconEndpoint = "https://www.google.com/s2/favicons?domain="
     public static let googleSignInClientId = "1066366793735-il4td26mn1hm3t645deborhq1kamecki.apps.googleusercontent.com"
     public static let isLoggedIn = "isLoggedIn"
     public static let bookmarkedIds = "bookmarkedIds"
     public static let userName = "userName"
     public static let userReadCount = "userReadCount"
+    public static let sharingMessage = "Check out this story"
 }
 
 struct UIConstants {
@@ -27,7 +30,7 @@ struct UIConstants {
     public static let betweenPadding: CGFloat = 4
     public static let buttonHeight: CGFloat = 44
     public static let cornerRadius: CGFloat = 8
-    public static let iconHeight: CGFloat = 24
+    public static let iconSize: CGSize = .init(width: 24, height: 24)
     
     enum Image: String {
         case feedOutline = "feed_outline"

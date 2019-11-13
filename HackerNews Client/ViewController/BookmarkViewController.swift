@@ -11,16 +11,23 @@ import UIKit
 
 class BookmarkViewController:
 UIViewController,
-ViewModelDelegate,
+HomeViewModelDelegate,
 UITableViewDataSource,
 UITableViewDelegate,
-UISearchBarDelegate,
-TopStoriesCellDelegate
+UISearchBarDelegate
 {
+    func homeViewModel(_ homeViewModel: HomeViewModel, didFailToFetchResultsWithError error: Error?) {
+        
+    }
+    
+    func reloadData() {
+        
+    }
+    
 
     var list: [HNModel] = []
     var filteredList: [HNModel] = []
-    var viewModel: HNViewModel?
+    var viewModel: HomeViewModel?
     
     var refreshControl = UIRefreshControl()
     
@@ -79,7 +86,7 @@ TopStoriesCellDelegate
         refreshControl.addTarget(self, action: #selector(refresh), for: UIControl.Event.valueChanged)
         tbv.addSubview(refreshControl)
         
-        viewModel = HNViewModel.init(delegate: self)
+        viewModel = HomeViewModel.init(delegate: self)
         
         _ = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: Selector(("checkForUserBookmarks")), userInfo: nil, repeats: true)
     }
@@ -104,7 +111,7 @@ TopStoriesCellDelegate
             if (newBookmarkedStories.count > 0) {
                 indicatorView.startAnimating()
                 idsAreFetching = true
-                viewModel?.idsFetched(newBookmarkedStories, fetchedCount: 0, noOfItemsToFetch: 8)
+                //viewModel?.idsFetched(newBookmarkedStories, fetchedCount: 0, noOfItemsToFetch: 8)
             }
         } else {
             noBookmarks.isHidden = false
@@ -112,7 +119,7 @@ TopStoriesCellDelegate
     }
     
     @objc func refresh(sender:AnyObject) {
-       viewModel?.getTopStories()
+       viewModel?.getData()
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
@@ -188,39 +195,26 @@ TopStoriesCellDelegate
         cell.delegate = self
         return cell
     }
+
+}
+
+extension BookmarkViewController: TopStoriesCellDelegate {
     
-    public func didTapBookmarkToggleFromCell(model : HNModel) {
-        toggleBookmarkStory(model.id)
-        model.isBookmarked = !model.isBookmarked
-        for (index, element) in filteredList.enumerated() {
-            if  (element.id == model.id) {
-                filteredList.remove(at: index)
-                tbv.deleteRows(at: [ IndexPath(row: index, section: 0) ], with: .automatic)
-                break
-            }
-        }
+    func topStoriesCell(_ topStoriesCell:TopStoriesCell,
+                        didTapBookmarkButtonForData data: HNModel) {
+        //viewModel?.toggleBookmarkStory(data.id)
+        data.isBookmarked = !data.isBookmarked
         tbv.reloadData()
     }
-    
-    private func toggleBookmarkStory(_ storyId: Int) {
-        if var bookmarkedIds = UserDefaults.standard.value(forKey: Constants.bookmarkedIds) as? [Int] {
-            if let itemToRemoveIndex = bookmarkedIds.firstIndex(of: storyId) {
-                bookmarkedIds.remove(at: itemToRemoveIndex)
-            }
-            else {
-                bookmarkedIds.append(storyId)
-            }
-            UserDefaults.standard.set(bookmarkedIds, forKey: Constants.bookmarkedIds)
+       
+    func topStoriesCell(_ topStoriesCell:TopStoriesCell,
+                        didTapShareButtonForData data: HNModel){
+        guard let url = URL(string: data.url) else {
+            return
         }
-        else {
-            UserDefaults.standard.set([storyId], forKey: Constants.bookmarkedIds)
-        }
+        let items: [Any] = [Constants.sharingMessage, url]
+        let sharingVC = UIActivityViewController(activityItems: items, applicationActivities: [])
+        present(sharingVC, animated: true)
     }
     
-    func shareStory(model: HNModel) {
-        let shareText = "Check out this story " + model.url
-        let vc = UIActivityViewController(activityItems: [shareText], applicationActivities: [])
-        present(vc, animated: true)
-    }
-
 }

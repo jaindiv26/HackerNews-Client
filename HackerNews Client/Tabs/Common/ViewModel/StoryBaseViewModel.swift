@@ -76,7 +76,10 @@ class StoryBaseViewModel {
         else {
             currentSearchQuery = nil
             filteredList.removeAll()
-            filteredList.append(contentsOf: list)
+            let temp = list.sorted(by: { (m1, m2) -> Bool in
+                 m1.time > m2.time
+             })
+            filteredList.append(contentsOf: temp)
         }
         delegate?.reloadData()
     }
